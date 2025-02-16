@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"nomoni/config"
-	"nomoni/src/models"
+	"toyfit/config"
+	"toyfit/src/models"
 
 	_ "github.com/lib/pq"
 )

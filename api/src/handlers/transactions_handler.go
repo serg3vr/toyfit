@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"nomoni/src/models"
-	"nomoni/src/repository"
+	"toyfit/src/models"
+	"toyfit/src/repository"
 
-	keys "nomoni/src/lib"
+	keys "toyfit/src/lib"
 
 	_ "github.com/lib/pq"
 )

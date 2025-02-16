@@ -158,7 +158,7 @@ import { ref, reactive } from 'vue';
 // import type { Meal } from 'components/models';
 // import ExampleComponent from 'components/ExampleComponent.vue';
 
-const kcalGoal = ref(0)
+const kcalGoal = ref(300)
 
 const fields = reactive({
   time: null,
@@ -209,11 +209,15 @@ const fields = reactive({
 
 const data = reactive([
 {
-    mealType: 'Dinner',
+    mealType: 'Breakfast',
     recipes: [
       {
         description: 'Pescado a la plancha (150 g) con verduras al vapor (brócoli, zanahorias, calabacín)',
         kcal: 100
+      },
+      {
+        description: 'Pan tostado con mermelada',
+        kcal: 200
       }
     ]
   }

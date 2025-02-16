@@ -3,7 +3,7 @@ package router
 import (
 	"github.com/go-chi/chi/v5"
 
-	"nomoni/src/handlers"
+	"toyfit/src/handlers"
 )
 
 func SetTransactionsRouter() *chi.Mux {

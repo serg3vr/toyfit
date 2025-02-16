@@ -1,8 +1,8 @@
 package main
 
 import (
-	"nomoni/config"
-	"nomoni/src/router"
+	"toyfit/config"
+	"toyfit/src/router"
 
 	_ "github.com/lib/pq"
 )

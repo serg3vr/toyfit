@@ -13,12 +13,13 @@ import (
 // }
 
 type FoodResponse struct {
-	Id       int64  `json:"id"`
-	Name     string `json:"name"`
-	Kcal     int64  `json:"kcal"`
-	Carbs    *int64 `json:"carbs"`
-	Proteins *int64 `json:"proteins"`
-	Fats     *int64 `json:"fats"`
+	Id       int64    `json:"id"`
+	Name     string   `json:"name"`
+	Kcal     float64  `json:"kcal"`
+	Carbs    *float64 `json:"carbs"`
+	Proteins *float64 `json:"proteins"`
+	Fats     *float64 `json:"fats"`
+	Sodium   *float64 `json:"sodium"`
 }
 
 // type DBTransaction struct {

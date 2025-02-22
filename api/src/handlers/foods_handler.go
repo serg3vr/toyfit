@@ -25,7 +25,8 @@ func (h *FoodsHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 			kcal,
 			carbs,
 			proteins,
-			fats
+			fats,
+			sodium
 		FROM foods
 		ORDER BY name DESC
 	`
@@ -37,25 +38,26 @@ func (h *FoodsHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	for rows.Next() {
-		var food models.FoodResponse
+		var model models.FoodResponse
 		err := rows.Scan(
-			&food.Id,
-			&food.Name,
-			&food.Kcal,
-			&food.Carbs,
-			&food.Proteins,
-			&food.Fats,
+			&model.Id,
+			&model.Name,
+			&model.Kcal,
+			&model.Carbs,
+			&model.Proteins,
+			&model.Fats,
+			&model.Sodium,
 		)
 		if err != nil {
 			// return data, err
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		data = append(data, food)
+		data = append(data, model)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(rows)
+	json.NewEncoder(w).Encode(data)
 }
 
 // func (h *FoodsHandler) Create(w http.ResponseWriter, r *http.Request) {

@@ -56,10 +56,11 @@ create table foods(
     updated_at timestamptz,
     updated_by bigint,
     name varchar(100) not null,
-    kcal smallint,
-    carbs smallint,
-    proteins smallint,
-    fats smallint
+    kcal numeric(6, 2),
+    carbs numeric(6, 2),
+    proteins numeric(6, 2),
+    fats numeric(6, 2),
+    sodium numeric(6, 2)
 );
 
 create table custom_foods(
@@ -70,10 +71,11 @@ create table custom_foods(
     updated_by bigint,
     user_id bigint not null references meals(id),
     name varchar(100) not null,
-    kcal smallint,
-    carbs smallint,
-    proteins smallint,
-    fats smallint
+    kcal numeric(6, 2),
+    carbs numeric(6, 2),
+    proteins numeric(6, 2),
+    fats numeric(6, 2),
+    sodium numeric(6, 2)
 );
 
 create table meal_foods(
@@ -84,5 +86,6 @@ create table meal_foods(
     updated_by bigint,
     meal_id bigint not null references meals(id),
     food_id bigint references foods(id),
-    custom_food_id bigint references custom_foods(id)
+    custom_food_id bigint references custom_foods(id),
+    qty smallint
 );

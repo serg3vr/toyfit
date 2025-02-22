@@ -87,6 +87,7 @@ func Start() {
 		r.Use(AuthMiddleware)
 		routeHandlers := []RouteHandlers{
 			{Pattern: "/transactions", Handler: SetTransactionsRouter()},
+			{Pattern: "/foods", Handler: SetFoodsRouter()},
 		}
 
 		for _, rh := range routeHandlers {

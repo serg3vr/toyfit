@@ -31,6 +31,12 @@
           Essential Links
         </q-item-label>
 
+        <MenuItem
+          v-for="mil in menuItemlist"
+          :key="mil.title"
+          v-bind="mil"
+        />
+
         <EssentialLink
           v-for="link in linksList"
           :key="link.title"
@@ -48,6 +54,20 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import EssentialLink, { type EssentialLinkProps } from 'components/EssentialLink.vue';
+import MenuItem, { type MenuItemProps } from 'components/MenuItem.vue';
+
+const menuItemlist: MenuItemProps[] = [
+  {
+    title: 'Home',
+    to: '/',
+    icon: 'school'
+  },
+  {
+    title: 'Products',
+    to: '/products',
+    icon: 'school'
+  }
+]
 
 const linksList: EssentialLinkProps[] = [
   {

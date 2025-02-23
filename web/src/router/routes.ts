@@ -4,7 +4,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/IndexPage.vue') }],
+    children: [
+      { path: '', component: () => import('pages/IndexPage.vue') },
+      { path: 'products', component: () => import('pages/ProductsPage.vue') },
+    ],
   },
 
   // Always leave this as last one,
@@ -14,5 +17,19 @@ const routes: RouteRecordRaw[] = [
     component: () => import('pages/ErrorNotFound.vue'),
   },
 ];
+
+// const route = (path: string, component: string, children: { path: string, component: string }[] = []): RouteRecordRaw => ({
+//   path,
+//   component: () => import(`../${component}`),
+//   children: children.map(child => ({
+//     path: child.path,
+//     component: () => import(`../${child.component}`),
+//   })),
+// });
+
+// const routes: RouteRecordRaw[] = [
+//   route('/', 'layouts/MainLayout.vue', [{ path: '', component: 'pages/IndexPage.vue' }]),
+//   route('/:catchAll(.*)*', 'pages/ErrorNotFound.vue'),
+// ];
 
 export default routes;

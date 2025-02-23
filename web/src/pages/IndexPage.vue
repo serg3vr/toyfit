@@ -20,38 +20,6 @@
       <div class="col-xs-12 col-sm-6">
         <div class="row">
           <div class="col-12">
-            <!-- <q-btn
-              dense
-              icon="add"
-              aria-label="Breakfast"
-              color="primary"
-              @click="'toggleLeftDrawer'"
-              label="Breakfast"
-            />
-            <q-btn
-              dense
-              icon="add"
-              aria-label="Lunch"
-              color="primary"
-              @click="'toggleLeftDrawer'"
-              label="Lunch"
-            />
-            <q-btn
-              dense
-              icon="add"
-              aria-label="Dinner"
-              color="primary"
-              @click="'toggleLeftDrawer'"
-              label="Dinner"
-            />
-            <q-btn
-              dense
-              icon="add"
-              aria-label="Snack"
-              color="primary"
-              @click="'toggleLeftDrawer'"
-              label="Snack"
-            /> -->
             <div class="q-gutter-sm">
               <q-radio v-model="fields.time" val="Breakfast" label="Breakfast" />
               <q-radio v-model="fields.time" val="Lunch" label="Lunch" />
@@ -60,6 +28,37 @@
             </div>
           </div>
           <div class="col-12 q-mt-sm">
+            <q-select
+              filled
+              v-model="fields.food"
+              :options="foodsFilteredOptions"
+              label="Food"
+              @filter="filterFn"
+              use-input
+              emit-value
+              map-options
+            >
+            <template v-slot:option="{ itemProps, opt, selected, toggleOption }">
+              <q-item v-bind="itemProps">
+                <q-item-section>
+                  <q-item-label v-html="opt.label" />
+                </q-item-section>
+                <q-item-section side>
+                  <!-- <q-toggle :model-value="selected" @update:model-value="toggleOption(opt)" /> -->
+                   {{ opt.kcal }} kcal
+                </q-item-section>
+              </q-item>
+            </template>
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No results
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+          <!-- <div class="col-12 q-mt-sm">
             <div class="row q-col-gutter-sm">
               <div class="col-10">
                 <q-input filled v-model="fields.meal" placeholder="Add meal" />
@@ -68,7 +67,7 @@
                 <q-input filled v-model="fields.kcal" placeholder="Kcal" />
               </div>
             </div>
-          </div>
+          </div> -->
           <div class="col-12 q-mt-sm text-right">
             <q-btn
               dense
@@ -157,55 +156,19 @@
 import { ref, reactive } from 'vue';
 // import type { Meal } from 'components/models';
 // import ExampleComponent from 'components/ExampleComponent.vue';
+import { api } from 'boot/axios'
 
 const kcalGoal = ref(300)
 
 const fields = reactive({
   time: null,
-  meal: null,
-  kcal: null
+  // meal: null,
+  food: null
+  // kcal: null
 })
 
-// let data = [
-//   {
-//     mealType: 'Breakfast',
-//     recipes: [
-//       {
-//         description: '2 huevos revueltos con espinacas y tomate'
-//       },
-//       {
-//         description: '1 rebanada de pan integral'
-//       }
-//     ]
-//   },
-//   {
-//     mealType: 'Lunch',
-//     recipes: [
-//       {
-//         description: 'Ensalada de pollo (150 g) con verduras (lechuga, pepino, zanahoria)'
-//       },
-//       {
-//         description: '1/2 taza de quinoa'
-//       }
-//     ]
-//   },
-//   {
-//     mealType: 'Dinner',
-//     recipes: [
-//       {
-//         description: 'Pescado a la plancha (150 g) con verduras al vapor (brócoli, zanahorias, calabacín)'
-//       }
-//     ]
-//   },
-//   {
-//     mealType: 'Snack',
-//     recipes: [
-//       {
-//         description: '1 puñado de almendras o nueces '
-//       }
-//     ]
-//   }
-// ]
+const foodsOptions = reactive([])
+const foodsFilteredOptions = reactive([])
 
 const data = reactive([
 {
@@ -224,22 +187,40 @@ const data = reactive([
 ])
 
 const doTheTest = () => {
-  if (fields.time && fields.meal && fields.kcal) {
+  if (fields.time && fields.food) {
+    const founded = foodsOptions.find(v => v.value === fields.food)
     data.push({
       mealType: fields.time,
-      recipes: [
-      {
-        description: fields.meal,
-        kcal: fields.kcal
-      }
-    ]
+      recipes: [{ description: founded.label, kcal: founded.kcal }]
     })
 
-    kcalGoal.value += parseInt(fields.kcal)
+    kcalGoal.value += parseInt(founded.kcal)
 
     fields.time = null
-    fields.meal = null
-    fields.kcal = null
+    fields.food = null
   }
+}
+
+const loadFoods = () => {
+  api.get('foods').then(({ data }) => {
+    const fo = (data || []).reduce((opt, val) => {
+      opt.push({ label: val.name, value: val.id, kcal: val.kcal })
+      return opt
+    }, [])
+    foodsOptions.length = 0
+    foodsOptions.push(...fo)
+    foodsFilteredOptions.length = 0
+    foodsFilteredOptions.push(...fo)
+  }).catch(error => error)
+}
+
+loadFoods()
+
+const filterFn = (val, update, abort) => {
+  update(() => {
+    const needle = val.toLowerCase()
+    foodsFilteredOptions.length = 0
+    foodsFilteredOptions.push(...foodsOptions.filter(v => v.label.toLowerCase().indexOf(needle) > -1))
+  })
 }
 </script>

@@ -63,8 +63,8 @@ const menuItemlist: MenuItemProps[] = [
     icon: 'school'
   },
   {
-    title: 'Products',
-    to: '/products',
+    title: 'Foods',
+    to: '/foods',
     icon: 'school'
   }
 ]

@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { reactive } from 'vue';
 // import type { Meal } from 'components/models';
 // import ExampleComponent from 'components/ExampleComponent.vue';
 import { api } from 'boot/axios'
@@ -51,10 +51,9 @@ const columns = [
 
 const loadFoods = () => {
   api.get('foods').then(response => {
-    console.log(response)
     rows.length = 0
     rows.push(...response.data || [])
-  })
+  }).catch(error => error)
 }
 
 loadFoods()

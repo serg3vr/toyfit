@@ -189,10 +189,16 @@ const data = reactive([
 const doTheTest = () => {
   if (fields.time && fields.food) {
     const founded = foodsOptions.find(v => v.value === fields.food)
-    data.push({
-      mealType: fields.time,
-      recipes: [{ description: founded.label, kcal: founded.kcal }]
-    })
+
+    const foundedData = data.find(v => v.mealType === fields.time)
+    if (foundedData) {
+      foundedData.recipes.push({ description: founded.label, kcal: founded.kcal })
+    } else {
+      data.push({
+        mealType: fields.time,
+        recipes: [{ description: founded.label, kcal: founded.kcal }]
+      })
+    }
 
     kcalGoal.value += parseInt(founded.kcal)
 

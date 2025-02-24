@@ -46,7 +46,7 @@ create table meals(
     updated_by bigint,
     user_id bigint not null references users(id),
     meal_type_id bigint not null references meal_types(id),
-    date timestamptz
+    date date
 );
 
 create table foods(

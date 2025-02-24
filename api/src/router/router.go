@@ -88,6 +88,7 @@ func Start() {
 		routeHandlers := []RouteHandlers{
 			{Pattern: "/transactions", Handler: SetTransactionsRouter()},
 			{Pattern: "/foods", Handler: SetFoodsRouter()},
+			{Pattern: "/meals", Handler: SetMealsRouter()},
 		}
 
 		for _, rh := range routeHandlers {

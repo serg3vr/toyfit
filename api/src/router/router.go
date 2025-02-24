@@ -59,7 +59,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		// }
 
 		// id, _ := strconv.Atoi(jsonToken.Get("Id"))
-		id := 1
+		id := int64(1)
 
 		ctx := context.WithValue(r.Context(), keys.LoggedUserId, id)
 

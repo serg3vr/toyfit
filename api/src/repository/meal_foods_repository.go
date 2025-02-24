@@ -7,7 +7,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type MealsRepository struct{}
+type MealFoodsRepository struct{}
 
 // func (r *MealFoodsRepository) GetAll(loggedUserId int) ([]models.ResponseTransaction, error) {
 // 	sqlStatement := `
@@ -43,19 +43,19 @@ type MealsRepository struct{}
 // 	return data, err
 // }
 
-func (r *MealsRepository) Create(loggedUserId int64, model models.MealWithFoodsRequest) (int64, error) {
+func (r *MealFoodsRepository) Create(loggedUserId int64, model models.MealFoodsRequest) (int64, error) {
 	sqlStatement := `
-		insert into meals (created_by, user_id, meal_type_id, date) 
-		values ($1, $2, $3, $4) returning id
-
+		insert into meal_foods (created_by, meal_id, food_id, custom_food_id, qty) 
+		values ($1, $2, $3, $4, $5) returning id
 	`
 	var id int64
 	err := config.DB.QueryRow(
 		sqlStatement,
 		loggedUserId,
-		model.UserId,
-		model.MealTypeId,
-		model.Date,
+		model.MealId,
+		model.FoodId,
+		model.CustomFoodId,
+		model.Qty,
 	).Scan(&id)
 
 	return id, err

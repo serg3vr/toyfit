@@ -1,21 +1,36 @@
 <template>
   <q-page class="q-pa-md">
     <div class="row">
-      <div class="col-xs-12 col-sm-6">
-        <div class="row">
-          <div class="col-sm-12">
-            Goal: {{ kcalGoal }} / 2040 kcal
-          </div>
-          <div class="col-sm-12">
+      <div class="col-xs-12 col-sm-4">
+        <q-knob
+          v-model="kcalProgress"
+          size="90px"
+          color="primary"
+          show-value
+          :step="0"
+          flat
+        />
+      </div>
+      <div class="col-xs-12 col-sm-8">
+        <div class="row q-col-gutter-lg">
+          <div class="col-xs-12 col-sm-4" :class="{'q-px-md': !$q.screen.xs}">
+            <q-linear-progress rounded size="8px" :value="carbsProgress" />
             Carbs: 88 / 120g
           </div>
-          <div class="col-sm-12">
+          <div class="col-xs-12 col-sm-4" :class="{'q-px-md': !$q.screen.xs}">
+            <q-linear-progress rounded size="8px" :value="carbsProgress" />
             Protein: 88 / 120g
           </div>
-          <div class="col-sm-12">
+          <div class="col-xs-12 col-sm-4" :class="{'q-px-md': !$q.screen.xs}">
+            <q-linear-progress rounded size="8px" :value="carbsProgress" />
             Fat: 88 / 120g
           </div>
         </div>
+      </div>
+
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-sm-6">
       </div>
       <div class="col-xs-12 col-sm-6">
         <div class="row">
@@ -153,13 +168,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 // import type { Meal } from 'components/models';
 // import ExampleComponent from 'components/ExampleComponent.vue';
 import { api } from 'boot/axios'
 
-const kcalGoal = ref(300)
-
+// const kcalAmount = ref(300)
+const kcalGoal = ref(2040)
+const carbsProgress = ref(80 * 100 / 120)
 const fields = reactive({
   time: null,
   // meal: null,
@@ -169,6 +185,27 @@ const fields = reactive({
 
 const foodsOptions = reactive([])
 const foodsFilteredOptions = reactive([])
+
+const kcalAmount = computed(() => {
+  let amount = 0
+  if (data) {
+    data.forEach(val => {
+      amount += val.recipes.reduce((opt, val) => {
+        opt += val.kcal
+        return opt
+      }, 0)
+    })
+  }
+  return amount
+})
+
+const kcalProgress = computed(() => {
+  if (kcalGoal.value > 0) {
+    return parseInt(kcalAmount.value * 100 / kcalGoal.value)
+  }
+  return 0
+})
+
 
 const data = reactive([
 {

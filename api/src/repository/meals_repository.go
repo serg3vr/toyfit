@@ -43,6 +43,40 @@ type MealsRepository struct{}
 // 	return data, err
 // }
 
+func (r *MealsRepository) GetMealsWithFoods(loggedUserId int64, date string) ([]models.MealResponse, error) {
+	sqlStatement := `
+		select 
+			m.id,
+			m.user_id,
+			m.meal_type_id,
+			m.date,
+			mt.name AS meal_type_name
+		from meals m
+		join meal_types mt on mt.id = m.meal_type_id
+		where m.user_id = $1 and date = $2
+	`
+	var data []models.MealResponse
+	rows, err := config.DB.Query(sqlStatement, loggedUserId, date)
+	if err != nil {
+		return data, err
+	}
+	for rows.Next() {
+		var model models.MealResponse
+		err := rows.Scan(
+			&model.Id,
+			&model.UserId,
+			&model.MealTypeId,
+			&model.Date,
+			&model.MealTypeName,
+		)
+		if err != nil {
+			return data, err
+		}
+		data = append(data, model)
+	}
+	return data, err
+}
+
 func (r *MealsRepository) Create(loggedUserId int64, model models.MealWithFoodsRequest) (int64, error) {
 	sqlStatement := `
 		insert into meals (created_by, user_id, meal_type_id, date) 

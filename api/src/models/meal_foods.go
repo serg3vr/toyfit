@@ -11,6 +11,14 @@ type MealFoodsRequest struct {
 	Qty          *int16 `json:"qty"`
 }
 
+type MealFoodsResponse struct {
+	Id           int64  `json:"id"`
+	MealId       int64  `json:"meal_id"`
+	FoodId       *int64 `json:"food_id"`
+	CustomFoodId *int64 `json:"custom_food_id"`
+	Qty          *int16 `json:"qty"`
+}
+
 // type ResponseTransaction struct {
 // 	Id          int64   `json:"id"`
 // 	Date        string  `json:"date"`

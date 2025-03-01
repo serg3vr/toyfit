@@ -17,6 +17,37 @@ type MealsHandler struct {
 	*repository.MealFoodsRepository
 }
 
+func (h *MealsHandler) GetMealsWithFoods(w http.ResponseWriter, r *http.Request) {
+	loggedUserId := r.Context().Value(keys.LoggedUserId).(int64)
+	// id, _ := strconv.Atoi(chi.URLParam(r, "id"))
+
+	mealsWithFoods, err := h.MealsRepository.GetMealsWithFoods(loggedUserId, "2025-02-23")
+	if err != nil {
+		fmt.Printf("Error %v", err)
+		http.Error(w, "Could not find the meals", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(mealsWithFoods)
+}
+
+// func (h *MealsHandler) GetById(w http.ResponseWriter, r *http.Request) {
+// 	loggedUserId := r.Context().Value(keys.LoggedUserId).(int64)
+// 	id, _ := strconv.Atoi(chi.URLParam(r, "id"))
+
+// 	var jpRepository *h.MealsRepository
+// 	dbJobPost, err := jpRepository.GetById(loggedUserId, id)
+// 	if err != nil {
+// 		fmt.Printf("Error %v", err)
+// 		http.Error(w, "Could not find the post", http.StatusNotFound)
+// 		return
+// 	}
+
+// 	w.Header().Set("Content-Type", "application/json")
+// 	json.NewEncoder(w).Encode(dbJobPost)
+// }
+
 func (h *MealsHandler) Create(w http.ResponseWriter, r *http.Request) {
 	loggedUserId := r.Context().Value(keys.LoggedUserId).(int64)
 

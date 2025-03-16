@@ -81,3 +81,34 @@ func (h *FoodsHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 // 	w.Header().Set("Content-Type", "application/json")
 // 	json.NewEncoder(w).Encode(id)
 // }
+
+// type Food struct {
+// 	Name string `json:"name"`
+// }
+
+// type Meal struct {
+// 	Name  string `json:"name"`
+// 	Foods []Food `json:"foods"`
+// }
+
+func (h *FoodsHandler) GetDaily(w http.ResponseWriter, r *http.Request) {
+	meals := []map[string]interface{}{
+		{
+			"name": "Breakfast",
+			"foods": []map[string]string{
+				{"name": "Huevito"},
+				{"name": "Dona"},
+			},
+		},
+		{
+			"name": "Lunch",
+			"foods": []map[string]string{
+				{"name": "Huevito"},
+				{"name": "Dona"},
+			},
+		},
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(meals)
+}

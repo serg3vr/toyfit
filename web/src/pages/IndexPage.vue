@@ -32,7 +32,7 @@
     <div class="row">
       <div class="col-xs-12 q-mb-sm" v-for="(m, idx) in meals" :key="idx">
         <div class="row">
-          <div class="col-xs-12 debug">
+          <div class="col-xs-12">
             <div class="row">
               <div class="col-xs-1">
                 <q-knob
@@ -47,15 +47,15 @@
               <div class="col-xs-10">
                 <div class="row">
                   <div class="col-xs-12 text-weight-medium">{{ m.name }}</div>
-                  <div class="col-xs-12">{{ m.currentKcal }} / {{ m.targetKcal }} kcal</div>
+                  <!-- <div class="col-xs-12">{{ m.currentKcal }} / {{ m.targetKcal }} kcal</div> -->
                 </div>
               </div>
               <div class="col-xs-1">
-                <q-btn icon="add" color="primary" round size="12px"></q-btn>
+                <q-btn icon="add" color="primary" round size="12px" @click="openAddMealFoodModal(m.id)"></q-btn>
               </div>
             </div>
           </div>
-          <div class="col-xs-12 debug">
+          <div class="col-xs-12">
             <div class="row" v-if="m?.foods">
               <div class="offset-xs-1 col-xs-11" v-for="(f, fIdx) in m.foods" :key="fIdx">{{ f.name }}</div>
             </div>
@@ -64,7 +64,7 @@
       </div>
     </div>
     <div class="row">
-      <AddMealModal v-model="addMealModal"></AddMealModal>
+      <AddMealModal v-model="addMealModal" :meal-type-id="mealTypeId"></AddMealModal>
     </div>
 
   </q-page>
@@ -77,7 +77,8 @@ import AddMealModal from 'components/AddMealModal.vue';
 // import { api } from 'boot/axios'
 const carbsProgress = ref(80 * 100 / 120)
 
-const addMealModal = ref(true)
+const addMealModal = ref(false)
+const mealTypeId = ref(0)
 
 const kcalProgress = computed(() => {
   return 0
@@ -85,33 +86,40 @@ const kcalProgress = computed(() => {
 
 const meals = reactive([
 {
-    name: 'Breakfast',
-    targetKcal: 900,
-    currentKcal: 100,
-    foodSummarize: 'Huevo, tortilla',
+  id: 1,
+  name: 'Breakfast',
+  foods: [
+    {
+      name: 'Huevo frito'
+    },
+    {
+      name: 'Café'
+    }
+  ]
+},
+{
+    id: 2,
+    name: 'Lunch'
+},
+{
+    id: 3,
+    name: 'Dinner'
+},
+{
+    id: 4,
+    name: 'Snacks',
     foods: [
       {
-        name: 'Huevo frito'
-      },
-      {
-        name: 'Café'
+        name: 'Doraditas'
       }
     ]
-},
-{
-    name: 'Lunch',
-    targetKcal: 900,
-    currentKcal: 100,
-},
-{
-    name: 'Dinner',
-    targetKcal: 900,
-    currentKcal: 100,
-},
-{
-    name: 'Snacks',
-    targetKcal: 900,
-    currentKcal: 100,
 }
 ])
+
+const openAddMealFoodModal = (mtId: number) => {
+  if (mtId > 0) {
+    mealTypeId.value = mtId
+    addMealModal.value = true
+  }
+}
 </script>

@@ -45,14 +45,15 @@ type MealFoodsRepository struct{}
 
 func (r *MealFoodsRepository) Create(loggedUserId int64, model models.MealFoodsRequest) (int64, error) {
 	sqlStatement := `
-		insert into meal_foods (created_by, meal_id, food_id, custom_food_id, qty) 
-		values ($1, $2, $3, $4, $5) returning id
+		insert into meal_foods (created_by, meal_type_id, date, food_id, custom_food_id, qty) 
+		values ($1, $2, $3, $4, $5, $6) returning id
 	`
 	var id int64
 	err := config.DB.QueryRow(
 		sqlStatement,
 		loggedUserId,
-		model.MealId,
+		model.MealTypeId,
+		model.Date,
 		model.FoodId,
 		model.CustomFoodId,
 		model.Qty,

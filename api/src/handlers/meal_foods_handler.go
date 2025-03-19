@@ -19,18 +19,18 @@ type MealFoodsHandler struct {
 func (h *MealFoodsHandler) Create(w http.ResponseWriter, r *http.Request) {
 	loggedUserId := r.Context().Value(keys.LoggedUserId).(int64)
 
-	var mealRequest models.MealFoodsRequest
+	var mealFoodRequest models.MealFoodsRequest
 	decoder := json.NewDecoder(r.Body)
 
-	if err := decoder.Decode(&mealRequest); err != nil {
+	if err := decoder.Decode(&mealFoodRequest); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	id, err := h.MealFoodsRepository.Create(loggedUserId, mealRequest)
+	id, err := h.MealFoodsRepository.Create(loggedUserId, mealFoodRequest)
 	if err != nil {
 		fmt.Printf("Error %v\n", err)
-		http.Error(w, "Could not create the meal", http.StatusNotFound)
+		http.Error(w, "Could not create the meal food", http.StatusNotFound)
 		return
 	}
 

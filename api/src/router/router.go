@@ -86,9 +86,10 @@ func Start() {
 	r.Group(func(r chi.Router) {
 		r.Use(AuthMiddleware)
 		routeHandlers := []RouteHandlers{
-			{Pattern: "/transactions", Handler: SetTransactionsRouter()},
+			// {Pattern: "/transactions", Handler: SetTransactionsRouter()},
 			{Pattern: "/foods", Handler: SetFoodsRouter()},
 			{Pattern: "/meals", Handler: SetMealsRouter()},
+			{Pattern: "/meal-foods", Handler: SetMealFoodsRouter()},
 		}
 
 		for _, rh := range routeHandlers {

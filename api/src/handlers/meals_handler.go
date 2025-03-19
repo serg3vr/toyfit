@@ -66,17 +66,17 @@ func (h *MealsHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var mealFoodsRequest = *mealRequest.MealFoodsRequest
+	// var mealFoodsRequest = *mealRequest.MealFoodsRequest
 
-	for _, foodRequest := range mealFoodsRequest {
-		foodRequest.MealId = id // Asignar el ID de la comida creada
-		_, err := h.MealFoodsRepository.Create(loggedUserId, foodRequest)
-		if err != nil {
-			fmt.Printf("Error creating meal food %v\n", err)
-			http.Error(w, "Could not create the meal food", http.StatusInternalServerError)
-			return
-		}
-	}
+	// for _, foodRequest := range mealFoodsRequest {
+	// 	foodRequest.MealId = id // Asignar el ID de la comida creada
+	// 	_, err := h.MealFoodsRepository.Create(loggedUserId, foodRequest)
+	// 	if err != nil {
+	// 		fmt.Printf("Error creating meal food %v\n", err)
+	// 		http.Error(w, "Could not create the meal food", http.StatusInternalServerError)
+	// 		return
+	// 	}
+	// }
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(id)

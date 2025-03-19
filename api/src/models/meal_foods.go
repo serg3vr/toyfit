@@ -1,14 +1,15 @@
 package models
 
 import (
-// "time"
+	"time"
 )
 
 type MealFoodsRequest struct {
-	MealId       int64  `json:"meal_id"`
-	FoodId       *int64 `json:"food_id"`
-	CustomFoodId *int64 `json:"custom_food_id"`
-	Qty          *int16 `json:"qty"`
+	MealTypeId   int64     `json:"meal_type_id"`
+	Date         time.Time `json:"date"`
+	FoodId       *int64    `json:"food_id"`
+	CustomFoodId *int64    `json:"custom_food_id"`
+	Qty          *int16    `json:"qty"`
 }
 
 type MealFoodsResponse struct {

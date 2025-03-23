@@ -32,7 +32,7 @@
             <q-select
               v-else
               filled
-              v-model="fields.food"
+              v-model="fields.foodId"
               :options="foodsFilteredOptions"
               label="Select a food"
               @filter="filterFn"
@@ -72,7 +72,7 @@
               aria-label="Add"
               color="primary"
               full-width
-              @click="doTheTest"
+              @click="addMealFood"
               label="Add"
             />
           </div>
@@ -85,8 +85,10 @@
 <script setup lang="ts">
 import { ref, computed, reactive, defineModel } from 'vue'
 import { api } from 'boot/axios'
+import { useQuasar } from 'quasar'
 
 const emit = defineEmits(['hide'])
+const $q = useQuasar()
 
 const props = defineProps({
   mealTypeId: {
@@ -107,7 +109,7 @@ const mealTypeNames = ['', 'Breakfast', 'Lunch', 'Dinner', 'Snack']
 const fields = reactive({
   time: null,
   // meal: null,
-  food: null
+  foodId: null
   // kcal: null
 })
 
@@ -162,6 +164,25 @@ const loadFoods = () => {
     foodsFilteredOptions.length = 0
     foodsFilteredOptions.push(...opts)
   }).catch(error => error)
+}
+
+const addMealFood = async () => {
+  const params = {
+    meal_type_id: mealTypeId.value,
+    date: "2025-03-19T00:15:43.890-06:00",
+    food_id : fields.foodId,
+    custom_food_id : null,
+    qty : 1
+  }
+  const { data } = await api.post('meal-foods', params).catch(error => error)
+  if (data) {
+    $q.notify({
+      message: 'Meal food added.',
+      position: 'top-right',
+      color: 'primary',
+      icon: 'check'
+    })
+  }
 }
 
 loadFoods()

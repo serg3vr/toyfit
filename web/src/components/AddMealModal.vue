@@ -86,6 +86,7 @@
 import { ref, computed, reactive, defineModel } from 'vue'
 import { api } from 'boot/axios'
 import { useQuasar } from 'quasar'
+import moment from 'moment'
 
 const emit = defineEmits(['hide'])
 const $q = useQuasar()
@@ -169,11 +170,12 @@ const loadFoods = () => {
 const addMealFood = async () => {
   const params = {
     meal_type_id: mealTypeId.value,
-    date: "2025-03-19T00:15:43.890-06:00",
+    date: moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
     food_id : fields.foodId,
     custom_food_id : null,
     qty : 1
   }
+
   const { data } = await api.post('meal-foods', params).catch(error => error)
   if (data) {
     $q.notify({

@@ -64,7 +64,11 @@
       </div>
     </div>
     <div class="row">
-      <AddMealModal v-model="addMealModal" :meal-type-id="mealTypeId" @hide="addMealModal = false"></AddMealModal>
+      <AddMealModal
+        v-model="addMealModal"
+        :meal-type-id="mealTypeId"
+        @loadDailyMealFoods="getDailyMealFoods"
+        @hide="addMealModal = false"></AddMealModal>
     </div>
 
   </q-page>
@@ -74,7 +78,7 @@
 import { ref, reactive, computed } from 'vue';
 // import type { Meal } from 'components/models';
 import AddMealModal from 'components/AddMealModal.vue';
-// import { api } from 'boot/axios'
+import { api } from 'boot/axios'
 const carbsProgress = ref(80 * 100 / 120)
 
 const addMealModal = ref(false)
@@ -88,33 +92,43 @@ const meals = reactive([
 {
   id: 1,
   name: 'Breakfast',
-  foods: [
-    {
-      name: 'Huevo frito'
-    },
-    {
-      name: 'Café'
-    }
-  ]
+  foods: []
+  // foods: [
+  //   {
+  //     name: 'Huevo frito'
+  //   },
+  //   {
+  //     name: 'Café'
+  //   }
+  // ]
 },
 {
     id: 2,
-    name: 'Lunch'
+    name: 'Lunch',
+    foods: []
 },
 {
     id: 3,
-    name: 'Dinner'
+    name: 'Dinner',
+    foods: []
 },
 {
     id: 4,
     name: 'Snacks',
-    foods: [
-      {
-        name: 'Doraditas'
-      }
-    ]
+    foods: []
+    // foods: [
+    //   {
+    //     name: 'Doraditas'
+    //   }
+    // ]
 }
 ])
+
+// const breakfast = reactive({
+//   id: 1,
+//   name: 'Breakfast',
+//   foods: []
+// })
 
 const openAddMealFoodModal = (mtId: number) => {
   if (mtId > 0) {
@@ -122,4 +136,30 @@ const openAddMealFoodModal = (mtId: number) => {
     addMealModal.value = true
   }
 }
+
+const getDailyMealFoods = async () => {
+  const { data } = await api.get('meal-foods/daily').catch(error => error)
+  if (data) {
+    meals[0].foods.length = 0
+    meals[1].foods.length = 0
+    meals[2].foods.length = 0
+    meals[3].foods.length = 0
+
+    data.forEach(elm => {
+      if (elm.meal_type_id === 1) {
+        meals[0].foods.push({ name: elm.name})
+      }
+      if (elm.meal_type_id === 2) {
+        meals[1].foods.push({ name: elm.name})
+      }
+      if (elm.meal_type_id === 3) {
+        meals[2].foods.push({ name: elm.name})
+      }
+      if (elm.meal_type_id === 4) {
+        meals[3].foods.push({ name: elm.name})
+      }
+    })
+  }
+}
+getDailyMealFoods()
 </script>

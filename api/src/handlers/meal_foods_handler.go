@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"toyfit/config"
 	"toyfit/src/models"
 	"toyfit/src/repository"
 
@@ -15,6 +16,42 @@ import (
 type MealFoodsHandler struct {
 	*repository.MealFoodsRepository
 	*repository.FoodsRepository
+}
+
+func (h *MealFoodsHandler) GetDaily(w http.ResponseWriter, r *http.Request) {
+	query := `
+		select
+			mf.meal_type_id, 
+			f.name 
+		from meal_foods mf
+		join foods f on f.id = mf.food_id
+		where 
+			date(date) = date(now()) 
+		order by mf.meal_type_id, mf.created_at
+	`
+	var data []models.DailyMealFoods
+	rows, err := config.DB.Query(query)
+	if err != nil {
+		// return data, err
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	for rows.Next() {
+		var model models.DailyMealFoods
+		err := rows.Scan(
+			&model.MealTypeId,
+			&model.Name,
+		)
+		if err != nil {
+			// return data, err
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		data = append(data, model)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(data)
 }
 
 func (h *MealFoodsHandler) Create(w http.ResponseWriter, r *http.Request) {

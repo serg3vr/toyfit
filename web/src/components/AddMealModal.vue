@@ -88,7 +88,7 @@ import { api } from 'boot/axios'
 import { useQuasar } from 'quasar'
 import moment from 'moment'
 
-const emit = defineEmits(['hide'])
+const emit = defineEmits(['hide', 'loadDailyMealFoods'])
 const $q = useQuasar()
 
 const props = defineProps({
@@ -160,6 +160,7 @@ const addMealFood = async () => {
   }
   const { data } = await api.post('meal-foods', params).catch(error => error)
   if (data) {
+    emit('loadDailyMealFoods')
     emit('hide')
     $q.notify({
       message: 'Meal food added.',

@@ -10,6 +10,7 @@ type MealFoodsRequest struct {
 	FoodId       *int64    `json:"food_id"`
 	CustomFoodId *int64    `json:"custom_food_id"`
 	Qty          *int16    `json:"qty"`
+	FoodName     *string   `json:"food_name"`
 }
 
 type MealFoodsResponse struct {

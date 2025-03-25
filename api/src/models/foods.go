@@ -12,6 +12,11 @@ import (
 // 	Description *string `json:"description"`
 // }
 
+type DBFoodCreate struct {
+	Name string  `json:"name"`
+	Kcal float64 `json:"kcal"`
+}
+
 type FoodResponse struct {
 	Id       int64    `json:"id"`
 	Name     string   `json:"name"`

@@ -64,7 +64,7 @@
       </div>
     </div>
     <div class="row">
-      <AddMealModal v-model="addMealModal" :meal-type-id="mealTypeId"></AddMealModal>
+      <AddMealModal v-model="addMealModal" :meal-type-id="mealTypeId" @hide="addMealModal = false"></AddMealModal>
     </div>
 
   </q-page>

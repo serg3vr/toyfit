@@ -20,7 +20,7 @@
           <div class="col-12 q-mt-sm">
             <q-input
               v-if="isInput"
-              v-model="foodName"
+              v-model="fields.foodName"
               filled
               label="Type a food"
             >
@@ -99,8 +99,6 @@ const props = defineProps({
   }
 })
 
-// const mealTypeId = ref(props.mealTypeId)
-
 const mealTypeId = computed(() => {
   return props.mealTypeId
 })
@@ -109,17 +107,14 @@ const mealTypeNames = ['', 'Breakfast', 'Lunch', 'Dinner', 'Snack']
 
 const fields = reactive({
   time: null,
-  // meal: null,
-  foodId: null
+  foodId: null,
+  foodName: ''
   // kcal: null
 })
 
 const foodsOptions = reactive([])
 const foodsFilteredOptions = reactive([])
 const isInput = ref(false)
-const foodName = ref('')
-
-// const show = ref(props.show)
 
 const model = defineModel({ required: true })
 
@@ -135,23 +130,10 @@ const onHide = () => {
   emit('hide', true)
 }
 
-// interface IFoods {
-//   id: number
-//   name: string
-//   kcal: number
-//   carbs: number
-//   proteins?: number
-//   fats?: number
-//   sodium?: number
-// }
-
-// const rows = reactive<IFoods[]>([])
-
 const toggleInput = (toggle: boolean) => {
   isInput.value = toggle
-  if (isInput.value) {
-    foodName.value = ''
-  }
+  fields.foodId = null
+  fields.foodName = ''
 }
 
 const loadFoods = () => {
@@ -173,14 +155,15 @@ const addMealFood = async () => {
     date: moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
     food_id : fields.foodId,
     custom_food_id : null,
-    qty : 1
+    qty: 1,
+    food_name: fields.foodName
   }
-
   const { data } = await api.post('meal-foods', params).catch(error => error)
   if (data) {
+    emit('hide')
     $q.notify({
       message: 'Meal food added.',
-      position: 'top-right',
+      position: 'bottom-left',
       color: 'primary',
       icon: 'check'
     })

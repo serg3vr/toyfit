@@ -84,6 +84,7 @@ create table meal_foods(
     created_by bigint not null,
     updated_at timestamptz,
     updated_by bigint,
+    user_id bigint not null references users(id),
     meal_type_id bigint not null references meal_types(id),
     date timestamptz not null,
     food_id bigint references foods(id),

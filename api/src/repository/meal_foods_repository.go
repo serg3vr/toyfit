@@ -45,12 +45,13 @@ type MealFoodsRepository struct{}
 
 func (r *MealFoodsRepository) Create(loggedUserId int64, model models.MealFoodsRequest) (int64, error) {
 	sqlStatement := `
-		insert into meal_foods (created_by, meal_type_id, date, food_id, custom_food_id, qty) 
-		values ($1, $2, $3, $4, $5, $6) returning id
+		insert into meal_foods (created_by, user_id, meal_type_id, date, food_id, custom_food_id, qty) 
+		values ($1, $2, $3, $4, $5, $6, $7) returning id
 	`
 	var id int64
 	err := config.DB.QueryRow(
 		sqlStatement,
+		loggedUserId,
 		loggedUserId,
 		model.MealTypeId,
 		model.Date,
@@ -60,4 +61,19 @@ func (r *MealFoodsRepository) Create(loggedUserId int64, model models.MealFoodsR
 	).Scan(&id)
 
 	return id, err
+}
+
+func (r *MealFoodsRepository) Delete(loggedUserId int64, id int64) (int64, error) {
+	sqlStatement := `
+		delete from meal_foods where user_id = $1 and id = $2
+	`
+	result, err := config.DB.Exec(sqlStatement, loggedUserId, id)
+
+	if err != nil {
+		return 0, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+
+	return rowsAffected, err
 }

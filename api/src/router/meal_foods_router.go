@@ -12,7 +12,7 @@ func SetMealFoodsRouter() *chi.Mux {
 	var h handlers.MealFoodsHandler
 	r.Post("/", h.Create)
 	r.Get("/daily", h.GetDaily)
-	// r.Get("/{id:[0-9]+}", jobPost.GetById)
+	r.Delete("/{id:[0-9]+}", h.Delete)
 	// r.Get("/", jobPost.GetAll)
 	// r.Put("/{id:[0-9]+}/address", jobPost.SetAddress)
 	// r.Put("/{id:[0-9]+}", jobPost.Update)

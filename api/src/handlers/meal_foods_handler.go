@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"toyfit/config"
 	"toyfit/src/models"
 	"toyfit/src/repository"
 
 	keys "toyfit/src/lib"
 
+	"github.com/go-chi/chi/v5"
 	_ "github.com/lib/pq"
 )
 
@@ -21,6 +23,7 @@ type MealFoodsHandler struct {
 func (h *MealFoodsHandler) GetDaily(w http.ResponseWriter, r *http.Request) {
 	query := `
 		select
+			mf.id,
 			mf.meal_type_id, 
 			f.name 
 		from meal_foods mf
@@ -29,7 +32,8 @@ func (h *MealFoodsHandler) GetDaily(w http.ResponseWriter, r *http.Request) {
 			date(date) = date(now()) 
 		order by mf.meal_type_id, mf.created_at
 	`
-	var data []models.DailyMealFoods
+	// var data []models.DailyMealFoods
+	data := make([]models.DailyMealFoods, 0)
 	rows, err := config.DB.Query(query)
 	if err != nil {
 		// return data, err
@@ -39,6 +43,7 @@ func (h *MealFoodsHandler) GetDaily(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var model models.DailyMealFoods
 		err := rows.Scan(
+			&model.Id,
 			&model.MealTypeId,
 			&model.Name,
 		)
@@ -84,6 +89,24 @@ func (h *MealFoodsHandler) Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Printf("Error %v\n", err)
 		http.Error(w, "Could not create the meal food", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(id)
+}
+
+func (h *MealFoodsHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	loggedUserId := r.Context().Value(keys.LoggedUserId).(int64)
+
+	str := chi.URLParam(r, "id")
+	id, _ := strconv.ParseInt(str, 10, 64)
+
+	_, err := h.MealFoodsRepository.Delete(loggedUserId, id)
+
+	if err != nil {
+		fmt.Printf("Error %v\n", err)
+		http.Error(w, "Could not delete the meal food", http.StatusNotFound)
 		return
 	}
 

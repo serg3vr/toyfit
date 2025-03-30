@@ -22,6 +22,7 @@ type MealFoodsResponse struct {
 }
 
 type DailyMealFoods struct {
+	Id         int64  `json:"id"`
 	MealTypeId int64  `json:"meal_type_id"`
 	Name       string `json:"name"`
 }

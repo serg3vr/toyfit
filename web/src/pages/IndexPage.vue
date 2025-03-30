@@ -29,8 +29,8 @@
       </div>
 
     </div>
-    <div class="row">
-      <div class="col-xs-12 q-mb-sm" v-for="(m, idx) in meals" :key="idx">
+    <div class="row meals">
+      <div class="col-xs-12 q-mb-sm" :class="{ 'meal-top-border': idx !== 0 }" v-for="(m, idx) in meals" :key="idx">
         <div class="row">
           <div class="col-xs-12">
             <div class="row">
@@ -57,7 +57,10 @@
           </div>
           <div class="col-xs-12">
             <div class="row" v-if="m?.foods">
-              <div class="offset-xs-1 col-xs-11" v-for="(f, fIdx) in m.foods" :key="fIdx">{{ f.name }}</div>
+              <div class="offset-xs-1 col-xs-10" v-for="(f, fIdx) in m.foods" :key="fIdx">
+                {{ f.name }}
+                <q-btn icon="delete" flat color="red-3" round size="12px" @click="deleteMealFood(f.id)"></q-btn>
+              </div>
             </div>
           </div>
         </div>
@@ -147,19 +150,42 @@ const getDailyMealFoods = async () => {
 
     data.forEach(elm => {
       if (elm.meal_type_id === 1) {
-        meals[0].foods.push({ name: elm.name})
+        meals[0].foods.push({ ...elm })
       }
       if (elm.meal_type_id === 2) {
-        meals[1].foods.push({ name: elm.name})
+        meals[1].foods.push({ ...elm })
       }
       if (elm.meal_type_id === 3) {
-        meals[2].foods.push({ name: elm.name})
+        meals[2].foods.push({ ...elm })
       }
       if (elm.meal_type_id === 4) {
-        meals[3].foods.push({ name: elm.name})
+        meals[3].foods.push({ ...elm })
       }
     })
   }
 }
+
+const deleteMealFood = async (id: number) => {
+  const { data } = await api.delete(`meal-foods/${id}`).catch(error => error)
+  if (data) {
+    getDailyMealFoods()
+    // $q.notify({
+    //   message: 'Meal food added.',
+    //   position: 'bottom-left',
+    //   color: 'primary',
+    //   icon: 'check'
+    // })
+  }
+}
+
 getDailyMealFoods()
 </script>
+
+<style lang="sass">
+.meals
+  border: 1px solid #e1e1e1
+  border-radius: 4px
+.meal-top-border
+  border-top: 1px solid #e1e1e1
+
+</style>

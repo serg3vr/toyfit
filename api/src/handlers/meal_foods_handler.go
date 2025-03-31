@@ -21,6 +21,8 @@ type MealFoodsHandler struct {
 }
 
 func (h *MealFoodsHandler) GetDaily(w http.ResponseWriter, r *http.Request) {
+	date := r.URL.Query().Get("date")
+
 	query := `
 		select
 			mf.id,
@@ -29,12 +31,12 @@ func (h *MealFoodsHandler) GetDaily(w http.ResponseWriter, r *http.Request) {
 		from meal_foods mf
 		join foods f on f.id = mf.food_id
 		where 
-			date(date) = date(now()) 
+			date(date) = $1
 		order by mf.meal_type_id, mf.created_at
 	`
 	// var data []models.DailyMealFoods
 	data := make([]models.DailyMealFoods, 0)
-	rows, err := config.DB.Query(query)
+	rows, err := config.DB.Query(query, date)
 	if err != nil {
 		// return data, err
 		http.Error(w, err.Error(), http.StatusBadRequest)

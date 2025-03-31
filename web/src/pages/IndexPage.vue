@@ -82,6 +82,8 @@ import { ref, reactive, computed } from 'vue';
 // import type { Meal } from 'components/models';
 import AddMealModal from 'components/AddMealModal.vue';
 import { api } from 'boot/axios'
+import moment from 'moment'
+
 const carbsProgress = ref(80 * 100 / 120)
 
 const addMealModal = ref(false)
@@ -141,7 +143,9 @@ const openAddMealFoodModal = (mtId: number) => {
 }
 
 const getDailyMealFoods = async () => {
-  const { data } = await api.get('meal-foods/daily').catch(error => error)
+  const date = moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ")
+  const date2 = moment().format("YYYY-MM-DD")
+  const { data } = await api.get('meal-foods/daily', { params: { date: date, date2: date2 }}).catch(error => error)
   if (data) {
     meals[0].foods.length = 0
     meals[1].foods.length = 0

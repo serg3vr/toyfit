@@ -77,3 +77,37 @@ func (r *MealFoodsRepository) Delete(loggedUserId int64, id int64) (int64, error
 
 	return rowsAffected, err
 }
+
+func (r *MealFoodsRepository) GetDaily(loggedUserId int64, timeZone string, date string) ([]models.DailyMealFoods, error) {
+	query := `
+		select
+			mf.id,
+			mf.meal_type_id, 
+			f.name 
+		from meal_foods mf
+		join foods f on f.id = mf.food_id
+		where 
+			user_id = $1
+			and date(date at time zone '` + timeZone + `')  = $2
+		order by mf.meal_type_id, mf.created_at
+	`
+	// var data []models.DailyMealFoods
+	data := make([]models.DailyMealFoods, 0)
+	rows, err := config.DB.Query(query, loggedUserId, date)
+	if err != nil {
+		return data, err
+	}
+	for rows.Next() {
+		var model models.DailyMealFoods
+		err := rows.Scan(
+			&model.Id,
+			&model.MealTypeId,
+			&model.Name,
+		)
+		if err != nil {
+			return data, err
+		}
+		data = append(data, model)
+	}
+	return data, err
+}

@@ -15,10 +15,10 @@ declare module 'vue' {
 // "export default () => {}" function below (which runs individually
 // for each client)
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-const api = axios.create({ baseURL: process.env.API || '', headers: { 'X-Time-Zone': timezone } });
+const api = axios.create({ baseURL: process.env.API || '', headers: { 'Time-Zone': timezone } });
 
 // api.interceptors.request.use((config) => {
-//   config.headers['X-Time-Zone'] = timezone;
+//   config.headers['Time-Zone'] = timezone;
 //   return config;
 // }, (error) => {
 //   return Promise.reject(error instanceof Error ? error : new Error(String(error)));

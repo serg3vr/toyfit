@@ -37,6 +37,7 @@ func (h *FoodsHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	
 	for rows.Next() {
 		var model models.FoodResponse
 		err := rows.Scan(

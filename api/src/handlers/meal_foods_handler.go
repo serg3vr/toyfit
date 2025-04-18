@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"toyfit/config"
+	// "toyfit/config"
 	"toyfit/src/models"
 	"toyfit/src/repository"
 
@@ -21,40 +21,15 @@ type MealFoodsHandler struct {
 }
 
 func (h *MealFoodsHandler) GetDaily(w http.ResponseWriter, r *http.Request) {
+	loggedUserId := r.Context().Value(keys.LoggedUserId).(int64)
+	timeZone := r.Context().Value(keys.TimeZone).(string)
 	date := r.URL.Query().Get("date")
 
-	query := `
-		select
-			mf.id,
-			mf.meal_type_id, 
-			f.name 
-		from meal_foods mf
-		join foods f on f.id = mf.food_id
-		where 
-			date(date) = $1
-		order by mf.meal_type_id, mf.created_at
-	`
-	// var data []models.DailyMealFoods
-	data := make([]models.DailyMealFoods, 0)
-	rows, err := config.DB.Query(query, date)
+	data, err := h.MealFoodsRepository.GetDaily(loggedUserId, timeZone, date)
 	if err != nil {
-		// return data, err
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		fmt.Printf("Error %v\n", err)
+		http.Error(w, "Could not get daily meal foods", http.StatusInternalServerError)
 		return
-	}
-	for rows.Next() {
-		var model models.DailyMealFoods
-		err := rows.Scan(
-			&model.Id,
-			&model.MealTypeId,
-			&model.Name,
-		)
-		if err != nil {
-			// return data, err
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		data = append(data, model)
 	}
 
 	w.Header().Set("Content-Type", "application/json")

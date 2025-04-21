@@ -47,6 +47,7 @@
               <div class="col-xs-10">
                 <div class="row">
                   <div class="col-xs-12 text-weight-medium">{{ m.name }}</div>
+                  <!-- <div class="col-xs-12 text-weight-light">{{ m.description }}</div> -->
                   <!-- <div class="col-xs-12">{{ m.currentKcal }} / {{ m.targetKcal }} kcal</div> -->
                 </div>
               </div>
@@ -58,8 +59,15 @@
           <div class="col-xs-12">
             <div class="row" v-if="m?.foods">
               <div class="offset-xs-1 col-xs-10" v-for="(f, fIdx) in m.foods" :key="fIdx">
-                {{ f.name }}
-                <q-btn icon="delete" flat color="red-3" round size="12px" @click="deleteMealFood(f.id)"></q-btn>
+                <div class="row">
+                  <div class="col-11">
+                    <span>{{ f.name }}</span> <span class="text-grey">{{ f.description }}</span>
+                  </div>
+                  <div class="col-1">
+                    <q-btn icon="delete" flat color="red-3" round size="12px" @click="deleteMealFood(f.id)"></q-btn>
+                  </div>
+                  <!-- <div class="col-12 text-weight-light">{{ f.description }}</div> -->
+                </div>
               </div>
             </div>
           </div>

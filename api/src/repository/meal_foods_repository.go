@@ -83,12 +83,17 @@ func (r *MealFoodsRepository) GetDaily(loggedUserId int64, timeZone string, date
 		select
 			mf.id,
 			mf.meal_type_id, 
-			f.name 
+			f.name,
+			f.description,
+			f.kcal, 
+			f.carbs, 
+			f.proteins,
+			f.fats 
 		from meal_foods mf
 		join foods f on f.id = mf.food_id
 		where 
 			user_id = $1
-			and date(date at time zone '` + timeZone + `')  = $2
+			and date(mf.date at time zone '` + timeZone + `') = $2
 		order by mf.meal_type_id, mf.created_at
 	`
 	// var data []models.DailyMealFoods
@@ -103,6 +108,11 @@ func (r *MealFoodsRepository) GetDaily(loggedUserId int64, timeZone string, date
 			&model.Id,
 			&model.MealTypeId,
 			&model.Name,
+			&model.Description,
+			&model.Kcal,
+			&model.Carbs,
+			&model.Proteins,
+			&model.Fats,
 		)
 		if err != nil {
 			return data, err

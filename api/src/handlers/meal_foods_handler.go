@@ -39,30 +39,31 @@ func (h *MealFoodsHandler) GetDaily(w http.ResponseWriter, r *http.Request) {
 func (h *MealFoodsHandler) Create(w http.ResponseWriter, r *http.Request) {
 	loggedUserId := r.Context().Value(keys.LoggedUserId).(int64)
 
-	var mealFoodRequest models.MealFoodsRequest
+	var mealFood models.MealFoodsRequest
 	decoder := json.NewDecoder(r.Body)
 
-	if err := decoder.Decode(&mealFoodRequest); err != nil {
+	if err := decoder.Decode(&mealFood); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if mealFoodRequest.FoodName != nil && *mealFoodRequest.FoodName != "" {
-		var dbFoodCreate models.DBFoodCreate
-		dbFoodCreate.Name = *mealFoodRequest.FoodName
-		dbFoodCreate.Kcal = 1
+	if mealFood.FoodName != nil && *mealFood.FoodName != "" {
+		var food models.BasicFoodCreate
+		food.Name = *mealFood.FoodName
+		food.Description = *mealFood.FoodDescription
+		food.Kcal = 1
 
-		dbFoodCreateId, err := h.FoodsRepository.Create(loggedUserId, dbFoodCreate)
+		createdFoodId, err := h.FoodsRepository.Create(loggedUserId, food)
 
 		if err != nil {
 			fmt.Printf("Error %v\n", err)
 			http.Error(w, "Could not create the food", http.StatusNotFound)
 			return
 		}
-		mealFoodRequest.FoodId = &dbFoodCreateId
+		mealFood.FoodId = &createdFoodId
 	}
 
-	id, err := h.MealFoodsRepository.Create(loggedUserId, mealFoodRequest)
+	id, err := h.MealFoodsRepository.Create(loggedUserId, mealFood)
 	if err != nil {
 		fmt.Printf("Error %v\n", err)
 		http.Error(w, "Could not create the meal food", http.StatusNotFound)

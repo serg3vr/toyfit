@@ -5,12 +5,13 @@ import (
 )
 
 type MealFoodsRequest struct {
-	MealTypeId   int64     `json:"meal_type_id"`
-	Date         time.Time `json:"date"`
-	FoodId       *int64    `json:"food_id"`
-	CustomFoodId *int64    `json:"custom_food_id"`
-	Qty          *int16    `json:"qty"`
-	FoodName     *string   `json:"food_name"`
+	MealTypeId      int64     `json:"meal_type_id"`
+	Date            time.Time `json:"date"`
+	FoodId          *int64    `json:"food_id"`
+	CustomFoodId    *int64    `json:"custom_food_id"`
+	Qty             *int16    `json:"qty"`
+	FoodName        *string   `json:"food_name"`
+	FoodDescription *string   `json:"food_description"`
 }
 
 type MealFoodsResponse struct {

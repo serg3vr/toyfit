@@ -16,7 +16,7 @@
       </q-bar>
       <div class="bg-white">
         <!-- <div class="row q-px-xs q-col-gutter-sm"> -->
-        <div class="row q-mt-md">
+        <div class="row q-mt-md q-col-gutter-sm">
           <div class="col-12 q-mt-sm">
             <q-input
               v-if="isInput"
@@ -65,6 +65,14 @@
               </template>
             </q-select>
           </div>
+          <div class="col-12" v-if="isInput">
+            <q-input
+              v-model="fields.foodDescription"
+              filled
+              label="Description"
+            >
+            </q-input>
+          </div>
           <div class="col-12 q-mt-lg text-right">
             <q-btn
               class="full-width"
@@ -108,7 +116,8 @@ const mealTypeNames = ['', 'Breakfast', 'Lunch', 'Dinner', 'Snack']
 const fields = reactive({
   time: null,
   foodId: null,
-  foodName: ''
+  foodName: '',
+  foodDescription: ''
   // kcal: null
 })
 
@@ -127,13 +136,19 @@ const filterFn = (val, update, abort) => {
 }
 
 const onHide = () => {
+  cleanFields()
   emit('hide', true)
 }
 
 const toggleInput = (toggle: boolean) => {
   isInput.value = toggle
+  cleanFields()
+}
+
+const cleanFields = () => {
   fields.foodId = null
   fields.foodName = ''
+  fields.foodDescription = ''
 }
 
 const loadFoods = () => {
@@ -156,12 +171,13 @@ const addMealFood = async () => {
     food_id : fields.foodId,
     custom_food_id : null,
     qty: 1,
-    food_name: fields.foodName
+    food_name: fields.foodName,
+    food_description: fields.foodDescription
   }
   const { data } = await api.post('meal-foods', params).catch(error => error)
   if (data) {
     emit('loadDailyMealFoods')
-    emit('hide')
+    onHide()
     $q.notify({
       message: 'Meal food added.',
       position: 'bottom-left',

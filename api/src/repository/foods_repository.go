@@ -43,16 +43,17 @@ type FoodsRepository struct{}
 // 	return data, err
 // }
 
-func (r *FoodsRepository) Create(loggedUserId int64, model models.DBFoodCreate) (int64, error) {
+func (r *FoodsRepository) Create(loggedUserId int64, model models.BasicFoodCreate) (int64, error) {
 	sqlStatement := `
-		insert into foods (created_by, name, kcal) 
-		values ($1, $2, $3) returning id
+		insert into foods (created_by, name, description, kcal) 
+		values ($1, $2, $3, $4) returning id
 	`
 	var id int64
 	err := config.DB.QueryRow(
 		sqlStatement,
 		loggedUserId,
 		model.Name,
+		model.Description,
 		model.Kcal,
 	).Scan(&id)
 

@@ -55,12 +55,14 @@ create table foods(
     created_by bigint not null,
     updated_at timestamptz,
     updated_by bigint,
-    name varchar(100) not null,
+    name varchar(100) not null unique,
+    description varchar(200),
     kcal numeric(6, 2),
     carbs numeric(6, 2),
     proteins numeric(6, 2),
     fats numeric(6, 2),
-    sodium numeric(6, 2)
+    sodium numeric(6, 2),
+    active boolean not null default true
 );
 
 create table custom_foods(

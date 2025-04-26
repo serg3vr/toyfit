@@ -9,7 +9,7 @@
   >
     <q-card style="min-width:30%;max-height: 95vh; border-radius: 16px;" class="q-pa-md">
       <q-bar class="bg-white">
-        <span>Add {{ mealTypeNames[mealTypeId] }}</span>
+        <span>Add <template v-if="isInput"> New</template> {{ mealTypeNames[mealTypeId] }}</span>
         <q-space />
         <q-btn rounded dense flat icon="close" color="grey" v-close-popup>
         </q-btn>
@@ -65,11 +65,21 @@
               </template>
             </q-select>
           </div>
-          <div class="col-12" v-if="isInput">
+          <div class="col-xs-12 col-sm-10" v-if="isInput">
             <q-input
               v-model="fields.foodDescription"
               filled
               label="Description"
+            >
+            </q-input>
+          </div>
+          <div class="col-xs-12 col-sm-2" v-if="isInput">
+            <q-input
+              v-model="fields.foodKcal"
+              filled
+              label="Kcal"
+              :maxlength="4"
+              @keypress="lockIntegers"
             >
             </q-input>
           </div>
@@ -95,6 +105,7 @@ import { ref, computed, reactive, defineModel } from 'vue'
 import { api } from 'boot/axios'
 import { useQuasar } from 'quasar'
 import moment from 'moment'
+import { lockIntegers } from 'src/commons/utils'
 
 const emit = defineEmits(['hide', 'loadDailyMealFoods'])
 const $q = useQuasar()
@@ -117,8 +128,8 @@ const fields = reactive({
   time: null,
   foodId: null,
   foodName: '',
-  foodDescription: ''
-  // kcal: null
+  foodDescription: '',
+  foodKcal: ''
 })
 
 const foodsOptions = reactive([])
@@ -149,6 +160,7 @@ const cleanFields = () => {
   fields.foodId = null
   fields.foodName = ''
   fields.foodDescription = ''
+  fields.foodKcal = ''
 }
 
 const loadFoods = () => {
@@ -172,7 +184,8 @@ const addMealFood = async () => {
     custom_food_id : null,
     qty: 1,
     food_name: fields.foodName,
-    food_description: fields.foodDescription
+    food_description: fields.foodDescription,
+    food_kcal: fields.foodKcal ? 1 * fields.foodKcal: 0
   }
   const { data } = await api.post('meal-foods', params).catch(error => error)
   if (data) {

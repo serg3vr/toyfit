@@ -43,7 +43,8 @@ func (h *MealFoodsHandler) Create(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&mealFood); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		fmt.Printf("Error %v\n", err)
+		http.Error(w, "Could not create the meal food", http.StatusNotFound)
 		return
 	}
 
@@ -51,7 +52,7 @@ func (h *MealFoodsHandler) Create(w http.ResponseWriter, r *http.Request) {
 		var food models.BasicFoodCreate
 		food.Name = *mealFood.FoodName
 		food.Description = *mealFood.FoodDescription
-		food.Kcal = 1
+		food.Kcal = *mealFood.FoodKcal
 
 		createdFoodId, err := h.FoodsRepository.Create(loggedUserId, food)
 

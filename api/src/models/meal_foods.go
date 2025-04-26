@@ -12,6 +12,7 @@ type MealFoodsRequest struct {
 	Qty             *int16    `json:"qty"`
 	FoodName        *string   `json:"food_name"`
 	FoodDescription *string   `json:"food_description"`
+	FoodKcal        *float64  `json:"food_kcal"`
 }
 
 type MealFoodsResponse struct {

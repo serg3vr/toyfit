@@ -1,15 +1,17 @@
 <template>
   <q-page class="q-pa-md">
     <div class="row">
-      <div class="col-xs-12 col-sm-4">
-        <q-knob
+      <div class="col-xs-12 col-sm-4 q-pl-sm text-h4">
+        <!-- <q-knob
           v-model="kcalProgress"
           size="90px"
           color="primary"
           show-value
           :step="0"
           flat
-        />
+        /> -->
+
+        <span class="text-blue-grey-9">{{ kcalProgress }}</span>
       </div>
       <div class="col-xs-12 col-sm-8">
         <div class="row q-col-gutter-lg">
@@ -34,15 +36,16 @@
         <div class="row">
           <div class="col-xs-12">
             <div class="row">
-              <div class="col-xs-1">
-                <q-knob
+              <div class="col-xs-1 q-pl-sm">
+                <!-- <q-knob
                   v-model="kcalProgress"
                   size="42px"
                   color="primary"
                   show-value
                   :step="0"
                   flat
-                />
+                /> -->
+                {{ m.kcal }}
               </div>
               <div class="col-xs-10">
                 <div class="row">
@@ -61,7 +64,7 @@
               <div class="offset-xs-1 col-xs-10" v-for="(f, fIdx) in m.foods" :key="fIdx">
                 <div class="row">
                   <div class="col-11">
-                    <span>{{ f.name }}</span> <span class="text-grey">{{ f.description }}</span>
+                    <span>{{ f.name }} {{ f.kcal }} kcal</span> <span class="text-grey">{{ f.description }}</span>
                   </div>
                   <div class="col-1">
                     <q-btn icon="delete" flat color="red-3" round size="12px" @click="deleteMealFood(f.id)"></q-btn>
@@ -91,6 +94,8 @@ import { ref, reactive, computed } from 'vue';
 import AddMealModal from 'components/AddMealModal.vue';
 import { api } from 'boot/axios'
 import moment from 'moment'
+import { useQuasar } from 'quasar'
+const $q = useQuasar()
 
 const carbsProgress = ref(80 * 100 / 120)
 
@@ -98,42 +103,35 @@ const addMealModal = ref(false)
 const mealTypeId = ref(0)
 
 const kcalProgress = computed(() => {
-  return 0
+  return meals.reduce((acc, val) => {
+    return acc + val.kcal
+  }, 0)
 })
 
 const meals = reactive([
 {
   id: 1,
   name: 'Breakfast',
-  foods: []
-  // foods: [
-  //   {
-  //     name: 'Huevo frito'
-  //   },
-  //   {
-  //     name: 'Café'
-  //   }
-  // ]
+  foods: [],
+  kcal: 0
 },
 {
     id: 2,
     name: 'Lunch',
-    foods: []
+    foods: [],
+    kcal: 0
 },
 {
     id: 3,
     name: 'Dinner',
-    foods: []
+    foods: [],
+    kcal: 0
 },
 {
     id: 4,
     name: 'Snacks',
-    foods: []
-    // foods: [
-    //   {
-    //     name: 'Doraditas'
-    //   }
-    // ]
+    foods: [],
+    kcal: 0
 }
 ])
 
@@ -163,31 +161,36 @@ const getDailyMealFoods = async () => {
     data.forEach(elm => {
       if (elm.meal_type_id === 1) {
         meals[0].foods.push({ ...elm })
+        meals[0].kcal += elm.kcal
       }
       if (elm.meal_type_id === 2) {
         meals[1].foods.push({ ...elm })
+        meals[1].kcal += elm.kcal
       }
       if (elm.meal_type_id === 3) {
         meals[2].foods.push({ ...elm })
+        meals[2].kcal += elm.kcal
       }
       if (elm.meal_type_id === 4) {
         meals[3].foods.push({ ...elm })
+        meals[3].kcal += elm.kcal
       }
     })
   }
 }
 
-const deleteMealFood = async (id: number) => {
-  const { data } = await api.delete(`meal-foods/${id}`).catch(error => error)
-  if (data) {
-    getDailyMealFoods()
-    // $q.notify({
-    //   message: 'Meal food added.',
-    //   position: 'bottom-left',
-    //   color: 'primary',
-    //   icon: 'check'
-    // })
-  }
+const deleteMealFood = (id: number) => {
+  $q.dialog({
+    title: 'Confirm',
+    message: 'Delete this food?',
+    cancel: true,
+    persistent: true
+  }).onOk(async () => {
+    const { data } = await api.delete(`meal-foods/${id}`).catch(error => error)
+    if (data) {
+      getDailyMealFoods()
+    }
+  })
 }
 
 getDailyMealFoods()

@@ -1,6 +1,21 @@
 <template>
   <q-page class="q-pa-md">
     <div class="row">
+      <div class="col-xs-10 q-pl-sm text-h4">
+        <span class="text-blue-grey-9">{{ formattedDate }}</span>
+      </div>
+      <div class="col-xs-1">
+        <q-btn outline round color="primary" icon="arrow_back" size="sm" @click="modifyDay(-1)" />
+      </div>
+      <div class="col-xs-1 text-right">
+        <q-btn outline round color="primary" icon="arrow_forward" size="sm" @click="modifyDay(1)" />
+      </div>
+    </div>
+
+    <div class="row q-mt-sm">
+      <!-- <div class="col-xs-12 q-pl-sm text-h4">
+        <span class="text-blue-grey-9">2025-04-28</span>
+      </div> -->
       <div class="col-xs-12 col-sm-4 q-pl-sm text-h4">
         <!-- <q-knob
           v-model="kcalProgress"
@@ -98,7 +113,8 @@ import { useQuasar } from 'quasar'
 const $q = useQuasar()
 
 const carbsProgress = ref(80 * 100 / 120)
-
+// const currentDate = ref(moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"))
+const currentDate = ref(moment().startOf('day'))
 const addMealModal = ref(false)
 const mealTypeId = ref(0)
 
@@ -135,11 +151,20 @@ const meals = reactive([
 }
 ])
 
-// const breakfast = reactive({
-//   id: 1,
-//   name: 'Breakfast',
-//   foods: []
-// })
+const formattedDate = computed(() => {
+  return currentDate.value.format('YYYY-MM-DD')
+})
+
+const modifyDay = (day: number) => {
+  if (day > 0) {
+    currentDate.value = moment(currentDate.value).add(1, 'day')
+    getDailyMealFoods(currentDate.value)
+  }
+  if (day < 0) {
+    currentDate.value = moment(currentDate.value).subtract(1, 'day')
+    getDailyMealFoods(currentDate.value)
+  }
+}
 
 const openAddMealFoodModal = (mtId: number) => {
   if (mtId > 0) {
@@ -148,15 +173,23 @@ const openAddMealFoodModal = (mtId: number) => {
   }
 }
 
-const getDailyMealFoods = async () => {
-  const date = moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ")
-  const date2 = moment().format("YYYY-MM-DD")
-  const { data } = await api.get('meal-foods/daily', { params: { date: date, date2: date2 }}).catch(error => error)
+const getDailyMealFoods = async (currentDateValue: unknown) => {
+  const date = moment(currentDateValue).format("YYYY-MM-DDTHH:mm:ss.SSSZ")
+  // const date2 = moment().format("YYYY-MM-DD")
+  const { data } = await api.get('meal-foods/daily', { params: { date: date }}).catch(error => error)
   if (data) {
-    meals[0].foods.length = 0
-    meals[1].foods.length = 0
-    meals[2].foods.length = 0
-    meals[3].foods.length = 0
+    meals.forEach(elm => {
+      elm.foods.length = 0
+      elm.kcal = 0
+    })
+    // meals[0].foods.length = 0
+    // meals[1].foods.length = 0
+    // meals[2].foods.length = 0
+    // meals[3].foods.length = 0
+    // meals[0].kcal = 0
+    // meals[1].kcal = 0
+    // meals[2].kcal = 0
+    // meals[3].kcal = 0
 
     data.forEach(elm => {
       if (elm.meal_type_id === 1) {
@@ -202,5 +235,4 @@ getDailyMealFoods()
   border-radius: 4px
 .meal-top-border
   border-top: 1px solid #e1e1e1
-
 </style>

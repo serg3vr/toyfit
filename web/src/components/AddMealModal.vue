@@ -14,10 +14,31 @@
         <q-btn rounded dense flat icon="close" color="grey" v-close-popup>
         </q-btn>
       </q-bar>
-      <div class="bg-white">
+      <div class="bg-white q-mt-sm">
         <!-- <div class="row q-px-xs q-col-gutter-sm"> -->
-        <div class="row q-mt-md q-col-gutter-sm">
-          <div class="col-12 q-mt-sm">
+        <div class="row q-mt-xs">
+          <div class="col-xs-12 row justify-between q-gutter-sm">
+            <q-radio v-model="fields.mealTypeId" val="1" label="Breakfast" />
+            <q-radio v-model="fields.mealTypeId" val="2" label="Lunch" />
+            <q-radio v-model="fields.mealTypeId" val="3" label="Dinner" />
+            <q-radio v-model="fields.mealTypeId" val="4" label="Snacks" />
+          </div>
+          <div class="col-xs-12 q-mt-xs">
+            <q-input filled v-model="fields.date" mask="date" :rules="['date']">
+              <template v-slot:append>
+                <q-icon name="event" class="cursor-pointer">
+                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                    <q-date v-model="fields.date">
+                      <div class="row items-center justify-end">
+                        <q-btn v-close-popup label="Close" color="primary" flat />
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
+          </div>
+          <div class="col-xs-12">
             <q-input
               v-if="isInput"
               v-model="fields.foodName"
@@ -65,7 +86,7 @@
               </template>
             </q-select>
           </div>
-          <div class="col-xs-12 col-sm-10" v-if="isInput">
+          <div class="col-xs-12 col-sm-10 q-mt-md q-pr-md" v-if="isInput">
             <q-input
               v-model="fields.foodDescription"
               filled
@@ -73,7 +94,7 @@
             >
             </q-input>
           </div>
-          <div class="col-xs-12 col-sm-2" v-if="isInput">
+          <div class="col-xs-12 col-sm-2 q-mt-md" v-if="isInput">
             <q-input
               v-model="fields.foodKcal"
               filled
@@ -83,13 +104,11 @@
             >
             </q-input>
           </div>
-          <div class="col-12 q-mt-lg text-right">
+          <div class="col-xs-12 q-mt-lg text-right">
             <q-btn
-              class="full-width"
               icon="add"
               aria-label="Add"
               color="primary"
-              full-width
               @click="addMealFood"
               label="Add"
             />
@@ -101,7 +120,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive, defineModel } from 'vue'
+import { ref, reactive, defineModel } from 'vue'
 import { api } from 'boot/axios'
 import { useQuasar } from 'quasar'
 import moment from 'moment'
@@ -110,22 +129,27 @@ import { lockIntegers } from 'src/commons/utils'
 const emit = defineEmits(['hide', 'loadDailyMealFoods'])
 const $q = useQuasar()
 
-const props = defineProps({
-  mealTypeId: {
-    type: Number,
-    // default: false,
-    required: true
-  }
-})
+// const props = defineProps({
+//   mealTypeId: {
+//     type: Number,
+//     // default: false,
+//     required: false
+//   }
+// })
 
-const mealTypeId = computed(() => {
-  return props.mealTypeId
-})
+// const mealTypeId = ref(1)
+
+// const mealTypeId = computed(() => {
+//   return props.mealTypeId
+// })
+
+
 
 const mealTypeNames = ['', 'Breakfast', 'Lunch', 'Dinner', 'Snack']
 
 const fields = reactive({
-  time: null,
+  mealTypeId: '1',
+  date: moment().format('YYYY-MM-DD'),
   foodId: null,
   foodName: '',
   foodDescription: '',
@@ -157,6 +181,8 @@ const toggleInput = (toggle: boolean) => {
 }
 
 const cleanFields = () => {
+  fields.mealTypeId = '1'
+  fields.date = moment().format('YYYY-MM-DD')
   fields.foodId = null
   fields.foodName = ''
   fields.foodDescription = ''
@@ -178,8 +204,8 @@ const loadFoods = () => {
 
 const addMealFood = async () => {
   const params = {
-    meal_type_id: mealTypeId.value,
-    date: moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+    meal_type_id: fields.mealTypeId * 1,
+    date: moment(fields.date, 'YYYY/MM/DD').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
     food_id : fields.foodId,
     custom_food_id : null,
     qty: 1,

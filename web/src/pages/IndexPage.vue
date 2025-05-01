@@ -1,14 +1,16 @@
 <template>
   <q-page class="q-pa-md">
     <div class="row">
-      <div class="col-xs-10 q-pl-sm text-h4">
+      <div class="col-xs-4 col-sm-8 q-pl-sm text-h4 self-center">
         <span class="text-blue-grey-9">{{ formattedDate }}</span>
       </div>
-      <div class="col-xs-1">
+      <div class="col-xs-4 col-sm-2 text-right self-center">
         <q-btn outline round color="primary" icon="arrow_back" size="sm" @click="modifyDay(-1)" />
-      </div>
-      <div class="col-xs-1 text-right">
+        &nbsp;
         <q-btn outline round color="primary" icon="arrow_forward" size="sm" @click="modifyDay(1)" />
+      </div>
+      <div class="col-xs-4 col-sm-2 text-right self-center">
+        <q-btn icon="add" color="primary" size="12px" label="Add" @click="openAddMealFoodModal"></q-btn>
       </div>
     </div>
 
@@ -70,7 +72,7 @@
                 </div>
               </div>
               <div class="col-xs-1">
-                <q-btn icon="add" color="primary" round size="12px" @click="openAddMealFoodModal(m.id)"></q-btn>
+                <!-- <q-btn icon="add" color="primary" round size="12px" @click="openAddMealFoodModal(m.id)"></q-btn> -->
               </div>
             </div>
           </div>
@@ -93,11 +95,12 @@
       </div>
     </div>
     <div class="row">
+      <!-- :meal-type-id="mealTypeId" -->
       <AddMealModal
         v-model="addMealModal"
-        :meal-type-id="mealTypeId"
         @loadDailyMealFoods="getDailyMealFoods"
-        @hide="addMealModal = false"></AddMealModal>
+        @hide="addMealModal = false">
+      </AddMealModal>
     </div>
 
   </q-page>
@@ -116,7 +119,7 @@ const carbsProgress = ref(80 * 100 / 120)
 // const currentDate = ref(moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"))
 const currentDate = ref(moment().startOf('day'))
 const addMealModal = ref(false)
-const mealTypeId = ref(0)
+// const mealTypeId = ref(0)
 
 const kcalProgress = computed(() => {
   return meals.reduce((acc, val) => {
@@ -158,38 +161,29 @@ const formattedDate = computed(() => {
 const modifyDay = (day: number) => {
   if (day > 0) {
     currentDate.value = moment(currentDate.value).add(1, 'day')
-    getDailyMealFoods(currentDate.value)
+    getDailyMealFoods()
   }
   if (day < 0) {
     currentDate.value = moment(currentDate.value).subtract(1, 'day')
-    getDailyMealFoods(currentDate.value)
+    getDailyMealFoods()
   }
 }
 
-const openAddMealFoodModal = (mtId: number) => {
-  if (mtId > 0) {
-    mealTypeId.value = mtId
-    addMealModal.value = true
-  }
+const openAddMealFoodModal = () => {
+  // if (mtId > 0) {
+  //   // mealTypeId.value = mtId
+  // }
+  addMealModal.value = true
 }
 
-const getDailyMealFoods = async (currentDateValue: unknown) => {
-  const date = moment(currentDateValue).format("YYYY-MM-DDTHH:mm:ss.SSSZ")
-  // const date2 = moment().format("YYYY-MM-DD")
+const getDailyMealFoods = async () => {
+  const date = moment(currentDate.value).format("YYYY-MM-DDTHH:mm:ss.SSSZ")
   const { data } = await api.get('meal-foods/daily', { params: { date: date }}).catch(error => error)
   if (data) {
     meals.forEach(elm => {
       elm.foods.length = 0
       elm.kcal = 0
     })
-    // meals[0].foods.length = 0
-    // meals[1].foods.length = 0
-    // meals[2].foods.length = 0
-    // meals[3].foods.length = 0
-    // meals[0].kcal = 0
-    // meals[1].kcal = 0
-    // meals[2].kcal = 0
-    // meals[3].kcal = 0
 
     data.forEach(elm => {
       if (elm.meal_type_id === 1) {

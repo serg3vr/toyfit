@@ -82,7 +82,8 @@ func (r *MealFoodsRepository) GetDaily(loggedUserId int64, timeZone string, date
 	query := `
 		select
 			mf.id,
-			mf.meal_type_id, 
+			mf.meal_type_id,
+			mf.qty, 
 			f.name,
 			f.description,
 			f.kcal, 
@@ -107,6 +108,7 @@ func (r *MealFoodsRepository) GetDaily(loggedUserId int64, timeZone string, date
 		err := rows.Scan(
 			&model.Id,
 			&model.MealTypeId,
+			&model.Qty,
 			&model.Name,
 			&model.Description,
 			&model.Kcal,

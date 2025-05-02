@@ -80,7 +80,10 @@
             <div class="row" v-if="m?.foods">
               <div class="offset-xs-1 col-xs-10" v-for="(f, fIdx) in m.foods" :key="fIdx">
                 <div class="row">
-                  <div class="col-11">
+                  <div class="col-1">
+                      {{ f.qty }}
+                  </div>
+                  <div class="col-10">
                     <span>{{ f.name }} {{ f.kcal }} kcal</span> <span class="text-grey">{{ f.description }}</span>
                   </div>
                   <div class="col-1">
@@ -188,19 +191,19 @@ const getDailyMealFoods = async () => {
     data.forEach(elm => {
       if (elm.meal_type_id === 1) {
         meals[0].foods.push({ ...elm })
-        meals[0].kcal += elm.kcal
+        meals[0].kcal += elm.kcal * elm.qty
       }
       if (elm.meal_type_id === 2) {
         meals[1].foods.push({ ...elm })
-        meals[1].kcal += elm.kcal
+        meals[1].kcal += elm.kcal * elm.qty
       }
       if (elm.meal_type_id === 3) {
         meals[2].foods.push({ ...elm })
-        meals[2].kcal += elm.kcal
+        meals[2].kcal += elm.kcal * elm.qty
       }
       if (elm.meal_type_id === 4) {
         meals[3].foods.push({ ...elm })
-        meals[3].kcal += elm.kcal
+        meals[3].kcal += elm.kcal * elm.qty
       }
     })
   }

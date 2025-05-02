@@ -104,6 +104,16 @@
             >
             </q-input>
           </div>
+          <div class="col-xs-12 col-sm-2 q-mt-md">
+            <q-input
+              v-model="fields.qty"
+              filled
+              label="Qty"
+              :maxlength="4"
+              @keypress="lockIntegers"
+            >
+            </q-input>
+          </div>
           <div class="col-xs-12 q-mt-lg text-right">
             <q-btn
               icon="add"
@@ -150,6 +160,7 @@ const mealTypeNames = ['', 'Breakfast', 'Lunch', 'Dinner', 'Snack']
 const fields = reactive({
   mealTypeId: '1',
   date: moment().format('YYYY-MM-DD'),
+  qty: 1,
   foodId: null,
   foodName: '',
   foodDescription: '',
@@ -183,6 +194,7 @@ const toggleInput = (toggle: boolean) => {
 const cleanFields = () => {
   fields.mealTypeId = '1'
   fields.date = moment().format('YYYY-MM-DD')
+  fields.qty = 1
   fields.foodId = null
   fields.foodName = ''
   fields.foodDescription = ''
@@ -208,7 +220,7 @@ const addMealFood = async () => {
     date: moment(fields.date, 'YYYY/MM/DD').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
     food_id : fields.foodId,
     custom_food_id : null,
-    qty: 1,
+    qty: fields.qty * 1,
     food_name: fields.foodName,
     food_description: fields.foodDescription,
     food_kcal: fields.foodKcal ? 1 * fields.foodKcal: 0

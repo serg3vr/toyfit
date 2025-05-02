@@ -100,5 +100,5 @@ func Start() {
 	})
 
 	fmt.Printf("Server running at 127.0.0.1:8090\n")
-	http.ListenAndServe("127.0.0.1:8090", r)
+	http.ListenAndServe("0.0.0.0:8090", r)
 }

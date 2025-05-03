@@ -13,9 +13,12 @@ import (
 // }
 
 type BasicFoodCreate struct {
-	Name        string  `json:"name"`
-	Kcal        float64 `json:"kcal"`
-	Description string  `json:"description"`
+	Name        string   `json:"name"`
+	Description *string  `json:"description"`
+	Kcal        float64  `json:"kcal"`
+	Carbs       *float64 `json:"carbs"`
+	Proteins    *float64 `json:"proteins"`
+	Fats        *float64 `json:"fats"`
 }
 
 type FoodResponse struct {

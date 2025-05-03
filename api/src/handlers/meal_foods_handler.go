@@ -48,11 +48,18 @@ func (h *MealFoodsHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// fmt.Printf("Error2 %v\n", mealFood.Food)
+	// fmt.Printf("Error22 %v\n", mealFood.Food.Name)
+	// fmt.Printf("Error222 %v\n", mealFood.Food.Fats)
+
 	if mealFood.FoodName != nil && *mealFood.FoodName != "" {
 		var food models.BasicFoodCreate
 		food.Name = *mealFood.FoodName
-		food.Description = *mealFood.FoodDescription
+		food.Description = mealFood.FoodDescription
 		food.Kcal = *mealFood.FoodKcal
+		food.Carbs = mealFood.FoodCarbs
+		food.Proteins = mealFood.FoodProteins
+		food.Fats = mealFood.FoodFats
 
 		createdFoodId, err := h.FoodsRepository.Create(loggedUserId, food)
 

@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: /api
+      dockerfile: Dockerfile
+    container_name: my-running-golang-app
+    ports:
+      - 8090:8090
+    volumes:
+      - ./api:/usr/src/app
+    # environment:
+      # - ENV=dev
+    command: /bin/bash -c "source /usr/src/app/env.sh && go build -v -o /usr/local/bin/main . && /usr/local/bin/main"

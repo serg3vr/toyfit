@@ -5,23 +5,12 @@ import (
 )
 
 type MealFoodsRequest struct {
-	MealTypeId   int64     `json:"meal_type_id"`
-	Date         time.Time `json:"date"`
-	FoodId       *int64    `json:"food_id"`
-	CustomFoodId *int64    `json:"custom_food_id"`
-	Qty          *int16    `json:"qty"`
-	// FoodName        *string   `json:"food_name"`
-	// FoodDescription *string   `json:"food_description"`
-	// FoodKcal        *float64  `json:"food_kcal"`
-
-	FoodName        *string  `json:"food_name"`
-	FoodDescription *string  `json:"food_description"`
-	FoodKcal        *float64 `json:"food_kcal"`
-	FoodCarbs       *float64 `json:"food_carbs"`
-	FoodProteins    *float64 `json:"food_proteins"`
-	FoodFats        *float64 `json:"food_fats"`
-
-	// Food *BasicFoodCreate `json:"food"`
+	MealTypeId   int64            `json:"meal_type_id"`
+	Date         time.Time        `json:"date"`
+	FoodId       *int64           `json:"food_id"`
+	CustomFoodId *int64           `json:"custom_food_id"`
+	Qty          *int16           `json:"qty"`
+	Food         *BasicFoodCreate `json:"food"`
 }
 
 type MealFoodsResponse struct {

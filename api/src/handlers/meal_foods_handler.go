@@ -44,7 +44,7 @@ func (h *MealFoodsHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	if err := decoder.Decode(&mealFood); err != nil {
 		fmt.Printf("Error %v\n", err)
-		http.Error(w, "Could not create the meal food", http.StatusNotFound)
+		http.Error(w, "Could not create the meal food", http.StatusBadRequest)
 		return
 	}
 
@@ -56,17 +56,22 @@ func (h *MealFoodsHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 			if err != nil {
 				fmt.Printf("Error %v\n", err)
-				http.Error(w, "Could not create the food", http.StatusNotFound)
+				http.Error(w, "Could not create the food", http.StatusBadRequest)
 				return
 			}
 			mealFood.FoodId = &createdFoodId
 		}
 	}
 
+	if mealFood.FoodId == nil && mealFood.CustomFoodId == nil {
+		http.Error(w, "Please add a valid id", http.StatusBadRequest)
+		return
+	}
+
 	id, err := h.MealFoodsRepository.Create(loggedUserId, mealFood)
 	if err != nil {
 		fmt.Printf("Error %v\n", err)
-		http.Error(w, "Could not create the meal food", http.StatusNotFound)
+		http.Error(w, "Could not create the meal food", http.StatusBadRequest)
 		return
 	}
 
@@ -84,7 +89,7 @@ func (h *MealFoodsHandler) Delete(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		fmt.Printf("Error %v\n", err)
-		http.Error(w, "Could not delete the meal food", http.StatusNotFound)
+		http.Error(w, "Could not delete the meal food", http.StatusBadRequest)
 		return
 	}
 

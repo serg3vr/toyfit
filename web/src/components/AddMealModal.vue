@@ -16,37 +16,21 @@
       </q-bar>
       <div class="bg-white q-mt-sm">
         <!-- <div class="row q-px-xs q-col-gutter-sm"> -->
-        <div class="row q-mt-xs">
+        <div class="row q-col-gutter-md">
           <div class="col-xs-12 row justify-between q-gutter-sm">
             <q-radio v-model="fields.mealTypeId" val="1" label="Breakfast" />
             <q-radio v-model="fields.mealTypeId" val="2" label="Lunch" />
             <q-radio v-model="fields.mealTypeId" val="3" label="Dinner" />
             <q-radio v-model="fields.mealTypeId" val="4" label="Snacks" />
           </div>
-          <div class="col-xs-12 q-mt-xs">
-            <q-input filled v-model="fields.date" mask="date" :rules="['date']">
-              <template v-slot:append>
-                <q-icon name="event" class="cursor-pointer">
-                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                    <q-date v-model="fields.date">
-                      <div class="row items-center justify-end">
-                        <q-btn v-close-popup label="Close" color="primary" flat />
-                      </div>
-                    </q-date>
-                  </q-popup-proxy>
-                </q-icon>
-              </template>
-            </q-input>
-          </div>
           <div class="col-xs-12">
             <q-input
               v-if="isInput"
-              v-model="fields.foodName"
+              v-model="fields.food.name"
               filled
               label="Type a food"
             >
               <template v-slot:append>
-                <!-- <q-icon name="close" @click.stop.prevent="model = ''" class="cursor-pointer" /> -->
                 <q-btn round dense flat icon="list" @click.stop.prevent @click="toggleInput(false)"/>
               </template>
             </q-input>
@@ -86,25 +70,22 @@
               </template>
             </q-select>
           </div>
-          <div class="col-xs-12 col-sm-10 q-mt-md q-pr-md" v-if="isInput">
-            <q-input
-              v-model="fields.foodDescription"
-              filled
-              label="Description"
-            >
+          <div class="col-xs-12 col-sm-9">
+            <q-input filled v-model="fields.date" mask="date" :rules="['date']">
+              <template v-slot:append>
+                <q-icon name="event" class="cursor-pointer">
+                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                    <q-date v-model="fields.date">
+                      <div class="row items-center justify-end">
+                        <q-btn v-close-popup label="Close" color="primary" flat />
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
             </q-input>
           </div>
-          <div class="col-xs-12 col-sm-2 q-mt-md" v-if="isInput">
-            <q-input
-              v-model="fields.foodKcal"
-              filled
-              label="Kcal"
-              :maxlength="4"
-              @keypress="lockIntegers"
-            >
-            </q-input>
-          </div>
-          <div class="col-xs-12 col-sm-2 q-mt-md">
+          <div class="col-xs-12 col-sm-3">
             <q-input
               v-model="fields.qty"
               filled
@@ -114,6 +95,70 @@
             >
             </q-input>
           </div>
+        </div>
+        <div class="row q-col-gutter-md" v-if="isInput">
+          <!-- <div class="col-xs-12 col-sm-2 q-mt-md">
+            <q-input
+              v-model="fields.qty"
+              filled
+              label="Qty"
+              :maxlength="4"
+              @keypress="lockIntegers"
+            >
+            </q-input>
+          </div> -->
+          <div class="col-xs-12 col-sm-12" >
+            <q-input
+              v-model="fields.food.description"
+              filled
+              label="Description"
+            >
+            </q-input>
+          </div>
+          <div class="col-xs-12 col-sm-3">
+            <q-input
+              v-model="fields.food.kcal"
+              filled
+              label="Kcal"
+              :maxlength="4"
+              @keypress="lockIntegers"
+            >
+            </q-input>
+          </div>
+          <div class="col-xs-12 col-sm-3">
+            <q-input
+              v-model="fields.food.carbs"
+              filled
+              label="Carbs"
+              :maxlength="4"
+              @keypress="lockIntegers"
+            >
+            </q-input>
+          </div>
+          <div class="col-xs-12 col-sm-3">
+            <q-input
+              v-model="fields.food.proteins"
+              filled
+              label="Proteins"
+              :maxlength="4"
+              @keypress="lockIntegers"
+            >
+            </q-input>
+          </div>
+          <div class="col-xs-12 col-sm-3">
+            <q-input
+              v-model="fields.food.fats"
+              filled
+              label="Fats"
+              :maxlength="4"
+              @keypress="lockIntegers"
+            >
+            </q-input>
+          </div>
+
+
+        </div>
+        <div class="row">
           <div class="col-xs-12 q-mt-lg text-right">
             <q-btn
               icon="add"
@@ -157,15 +202,24 @@ const $q = useQuasar()
 
 const mealTypeNames = ['', 'Breakfast', 'Lunch', 'Dinner', 'Snack']
 
-const fields = reactive({
+const defaultFoodFields = {
+  name: '',
+  description: '',
+  kcal: null,
+  carbs: null,
+  proteins: '',
+  fats: null
+}
+
+const defaultFields = {
   mealTypeId: '1',
   date: moment().format('YYYY-MM-DD'),
-  qty: 1,
   foodId: null,
-  foodName: '',
-  foodDescription: '',
-  foodKcal: ''
-})
+  qty: 1,
+  food: defaultFoodFields
+}
+
+const fields = reactive(defaultFields)
 
 const foodsOptions = reactive([])
 const foodsFilteredOptions = reactive([])
@@ -194,11 +248,9 @@ const toggleInput = (toggle: boolean) => {
 const cleanFields = () => {
   fields.mealTypeId = '1'
   fields.date = moment().format('YYYY-MM-DD')
-  fields.qty = 1
   fields.foodId = null
-  fields.foodName = ''
-  fields.foodDescription = ''
-  fields.foodKcal = ''
+  fields.qty = 1
+  fields.food = defaultFoodFields
 }
 
 const loadFoods = () => {
@@ -216,14 +268,19 @@ const loadFoods = () => {
 
 const addMealFood = async () => {
   const params = {
-    meal_type_id: fields.mealTypeId * 1,
+    meal_type_id: Number(fields.mealTypeId),
     date: moment(fields.date, 'YYYY/MM/DD').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
     food_id : fields.foodId,
     custom_food_id : null,
     qty: fields.qty * 1,
-    food_name: fields.foodName,
-    food_description: fields.foodDescription,
-    food_kcal: fields.foodKcal ? 1 * fields.foodKcal: 0
+    food: isInput.value ? {
+      name: fields.food.name,
+      description: fields.food.description,
+      kcal: Number(fields.food.kcal),
+      carbs: Number(fields.food.carbs),
+      proteins: Number(fields.food.proteins),
+      fats: Number(fields.food.fats)
+    } : null
   }
   const { data } = await api.post('meal-foods', params).catch(error => error)
   if (data) {

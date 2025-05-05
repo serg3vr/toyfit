@@ -250,7 +250,7 @@ const cleanFields = () => {
   fields.date = moment().format('YYYY-MM-DD')
   fields.foodId = null
   fields.qty = 1
-  fields.food = defaultFoodFields
+  fields.food = { ...defaultFoodFields }
 }
 
 const loadFoods = () => {

@@ -285,6 +285,9 @@ const addMealFood = async () => {
   const { data } = await api.post('meal-foods', params).catch(error => error)
   if (data) {
     emit('loadDailyMealFoods')
+    if (params.food.name || null) {
+      loadFoods()
+    }
     onHide()
     $q.notify({
       message: 'Meal food added.',

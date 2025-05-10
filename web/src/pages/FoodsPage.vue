@@ -9,6 +9,9 @@
       </div>
     </div>
     <div class="row">
+      <div class="col-12 q-mt-sm text-right">
+        <q-btn icon="add" color="primary" size="12px" label="Add" @click="rightDrawer.toggle(true)"></q-btn>
+      </div>
       <div class="col-12 q-mt-sm">
         <q-table
           style="height: 400px"
@@ -27,6 +30,9 @@ import { reactive } from 'vue';
 // import type { Meal } from 'components/models';
 // import ExampleComponent from 'components/ExampleComponent.vue';
 import { api } from 'boot/axios'
+import { useRightDrawerStore } from 'src/stores/right-drawer-store';
+
+const rightDrawer = useRightDrawerStore()
 
 interface IFoods {
   id: number
@@ -55,6 +61,10 @@ const loadFoods = () => {
     rows.push(...response.data || [])
   }).catch(error => error)
 }
+
+// const toggleRightDrawer = () => {
+//   rightDrawer.toggle(!rightDrawer.show)
+// }
 
 loadFoods()
 </script>

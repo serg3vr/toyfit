@@ -89,9 +89,9 @@
             <q-input
               v-model="fields.qty"
               filled
-              label="Qty2"
+              label="Qty"
               :maxlength="6"
-              @keydown="lockDecimals"
+              @keypress="lockDecimals"
             >
             </q-input>
           </div>
@@ -275,9 +275,6 @@ const addMealFood = async () => {
   const { data } = await api.post('meal-foods', params).catch(error => error)
   if (data) {
     emit('loadDailyMealFoods')
-    if (params.food.name || null) {
-      loadFoods()
-    }
     onHide()
     $q.notify({
       message: 'Meal food added.',
@@ -285,6 +282,9 @@ const addMealFood = async () => {
       color: 'primary',
       icon: 'check'
     })
+    if (params.food?.name || null) {
+      loadFoods()
+    }
   }
 }
 

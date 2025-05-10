@@ -14,17 +14,17 @@ type MealFoodsRequest struct {
 }
 
 type MealFoodsResponse struct {
-	Id           int64  `json:"id"`
-	MealId       int64  `json:"meal_id"`
-	FoodId       *int64 `json:"food_id"`
-	CustomFoodId *int64 `json:"custom_food_id"`
-	Qty          *int16 `json:"qty"`
+	Id           int64    `json:"id"`
+	MealId       int64    `json:"meal_id"`
+	FoodId       *int64   `json:"food_id"`
+	CustomFoodId *int64   `json:"custom_food_id"`
+	Qty          *float64 `json:"qty"`
 }
 
 type DailyMealFoods struct {
 	Id          int64    `json:"id"`
 	MealTypeId  int64    `json:"meal_type_id"`
-	Qty         int16    `json:"qty"`
+	Qty         float64  `json:"qty"`
 	Name        string   `json:"name"`
 	Description *string  `json:"description"`
 	Kcal        *float64 `json:"kcal"`

@@ -9,7 +9,7 @@ type MealFoodsRequest struct {
 	Date         time.Time        `json:"date"`
 	FoodId       *int64           `json:"food_id"`
 	CustomFoodId *int64           `json:"custom_food_id"`
-	Qty          *int16           `json:"qty"`
+	Qty          *float64         `json:"qty"`
 	Food         *BasicFoodCreate `json:"food"`
 }
 

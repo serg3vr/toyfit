@@ -89,24 +89,14 @@
             <q-input
               v-model="fields.qty"
               filled
-              label="Qty"
-              :maxlength="4"
-              @keypress="lockIntegers"
+              label="Qty2"
+              :maxlength="6"
+              @keydown="lockDecimals"
             >
             </q-input>
           </div>
         </div>
         <div class="row q-col-gutter-md" v-if="isInput">
-          <!-- <div class="col-xs-12 col-sm-2 q-mt-md">
-            <q-input
-              v-model="fields.qty"
-              filled
-              label="Qty"
-              :maxlength="4"
-              @keypress="lockIntegers"
-            >
-            </q-input>
-          </div> -->
           <div class="col-xs-12 col-sm-12" >
             <q-input
               v-model="fields.food.description"
@@ -120,8 +110,8 @@
               v-model="fields.food.kcal"
               filled
               label="Kcal"
-              :maxlength="4"
-              @keypress="lockIntegers"
+              :maxlength="6"
+              @keypress="lockDecimals"
             >
             </q-input>
           </div>
@@ -130,8 +120,8 @@
               v-model="fields.food.carbs"
               filled
               label="Carbs"
-              :maxlength="4"
-              @keypress="lockIntegers"
+              :maxlength="6"
+              @keypress="lockDecimals"
             >
             </q-input>
           </div>
@@ -140,8 +130,8 @@
               v-model="fields.food.proteins"
               filled
               label="Proteins"
-              :maxlength="4"
-              @keypress="lockIntegers"
+              :maxlength="6"
+              @keypress="lockDecimals"
             >
             </q-input>
           </div>
@@ -150,8 +140,8 @@
               v-model="fields.food.fats"
               filled
               label="Fats"
-              :maxlength="4"
-              @keypress="lockIntegers"
+              :maxlength="6"
+              @keypress="lockDecimals"
             >
             </q-input>
           </div>
@@ -179,7 +169,7 @@ import { ref, reactive, defineModel } from 'vue'
 import { api } from 'boot/axios'
 import { useQuasar } from 'quasar'
 import moment from 'moment'
-import { lockIntegers } from 'src/commons/utils'
+import { lockDecimals } from 'src/commons/utils'
 
 const emit = defineEmits(['hide', 'loadDailyMealFoods'])
 const $q = useQuasar()

@@ -51,7 +51,7 @@
         show-if-above
         bordered
         overlay
-        :width="200"
+        :width="$q.screen.width / 3 - 1"
         :breakpoint="500"
         behavior="mobile"
         no-swipe-open

@@ -14,31 +14,51 @@
       </div>
       <div class="col-12 q-mt-sm">
         <q-table
-          style="height: 400px"
+          style="height: 75vh"
           flat
           :rows="rows"
           :columns="columns"
           row-key="id"
-        />
+        >
+          <template v-slot:body="props">
+            <q-tr :props="props">
+              <q-td key="name" :props="props">
+                {{ props.row.name }}
+              </q-td>
+              <q-td key="description" :props="props">
+                {{ props.row.description }}
+              </q-td>
+              <q-td key="kcal" :props="props">
+                {{ props.row.kcal }}
+              </q-td>
+              <q-td key="carbs" :props="props">
+                {{ props.row.carbs }}
+              </q-td>
+              <q-td key="proteins" :props="props">{{ props.row.proteins }}</q-td>
+              <q-td key="fats" :props="props">{{ props.row.fats }}</q-td>
+              <q-td key="sodium" :props="props">{{ props.row.sodium }}</q-td>
+            </q-tr>
+          </template>
+        </q-table>
       </div>
     </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
-// import type { Meal } from 'components/models';
-// import ExampleComponent from 'components/ExampleComponent.vue';
+import { ref, reactive } from 'vue';
 import { api } from 'boot/axios'
 import { useRightDrawerStore } from 'src/stores/right-drawer-store';
 
 const rightDrawer = useRightDrawerStore()
+const hoveredId = ref(0)
 
 interface IFoods {
   id: number
   name: string
+  description?: string
   kcal: number
-  carbs: number
+  carbs?: number
   proteins?: number
   fats?: number
   sodium?: number
@@ -48,11 +68,12 @@ const rows = reactive<IFoods[]>([])
 
 const columns = [
   { name: 'name', required: true, label: 'Food', align: 'left', field: 'name', sortable: true },
-  { name: 'kcal', align: 'center', label: 'Calories', field: 'kcal', sortable: true },
-  { name: 'fats', label: 'Fat (g)', field: 'fats', sortable: true },
-  { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-  { name: 'proteins', label: 'Protein (g)', field: 'proteins' },
-  { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' }
+  { name: 'description', required: true, label: 'Description', align: 'left', field: 'description', sortable: true },
+  { name: 'kcal', label: 'Calories', field: 'kcal', align: 'right', sortable: true },
+  { name: 'fats', label: 'Fat (g)', field: 'fats', align: 'right', sortable: true },
+  { name: 'carbs', label: 'Carbs (g)', field: 'carbs', align: 'right', },
+  { name: 'proteins', label: 'Protein (g)', field: 'proteins', align: 'right' },
+  { name: 'sodium', label: 'Sodium (mg)', field: 'sodium', align: 'right' }
 ]
 
 const loadFoods = () => {
@@ -62,9 +83,27 @@ const loadFoods = () => {
   }).catch(error => error)
 }
 
-// const toggleRightDrawer = () => {
-//   rightDrawer.toggle(!rightDrawer.show)
-// }
-
 loadFoods()
 </script>
+
+<style scoped>
+.email-cell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.email-options {
+  display: flex;
+  gap: 4px;
+}
+
+.q-tr {
+  transition: background-color 0.2s;
+}
+
+.q-tr:hover {
+  background-color: #f0f0f0;
+}
+</style>

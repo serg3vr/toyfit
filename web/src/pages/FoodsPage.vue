@@ -10,7 +10,7 @@
     </div>
     <div class="row">
       <div class="col-12 q-mt-sm text-right">
-        <q-btn icon="add" color="primary" size="12px" label="Add" @click="rightDrawer.toggle(true)"></q-btn>
+        <q-btn icon="add" color="primary" size="12px" label="Add" @click="openDrawer"></q-btn>
       </div>
       <div class="col-12 q-mt-sm">
         <q-table
@@ -42,16 +42,20 @@
         </q-table>
       </div>
     </div>
+    <NewFoodPanel
+      v-model="showModal"
+    />
   </q-page>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { api } from 'boot/axios'
-import { useRightDrawerStore } from 'src/stores/right-drawer-store';
+import NewFoodPanel from 'src/components/NewFoodPanel.vue';
+// import { useRightDrawerStore } from 'src/stores/right-drawer-store';
 
-const rightDrawer = useRightDrawerStore()
-const hoveredId = ref(0)
+// const rightDrawer = useRightDrawerStore()
+const showModal = ref(false)
 
 interface IFoods {
   id: number
@@ -81,6 +85,10 @@ const loadFoods = () => {
     rows.length = 0
     rows.push(...response.data || [])
   }).catch(error => error)
+}
+
+const openDrawer = () => {
+  showModal.value = true
 }
 
 loadFoods()

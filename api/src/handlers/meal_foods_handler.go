@@ -51,16 +51,18 @@ func (h *MealFoodsHandler) Create(w http.ResponseWriter, r *http.Request) {
 	if mealFood.Food != nil {
 		food := *mealFood.Food
 
-		if *food.Name != "" {
-			createdFoodId, err := h.FoodsRepository.Create(loggedUserId, food)
-
-			if err != nil {
-				fmt.Printf("Error %v\n", err)
-				http.Error(w, "Could not create the food", http.StatusBadRequest)
-				return
-			}
-			mealFood.FoodId = &createdFoodId
+		if food.Name == "" {
+			http.Error(w, "Please add the food's name", http.StatusBadRequest)
+			return
 		}
+		createdFoodId, err := h.FoodsRepository.Create(loggedUserId, food)
+
+		if err != nil {
+			fmt.Printf("Error %v\n", err)
+			http.Error(w, "Could not create the food", http.StatusBadRequest)
+			return
+		}
+		mealFood.FoodId = &createdFoodId
 	}
 
 	if mealFood.FoodId == nil && mealFood.CustomFoodId == nil {

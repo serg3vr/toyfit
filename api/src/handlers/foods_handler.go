@@ -3,9 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+
 	// "fmt"
 	"net/http"
 	"toyfit/config"
+	// keys "toyfit/src/lib"
 	"toyfit/src/models"
 
 	// "toyfit/src/repository"
@@ -64,3 +66,19 @@ func (h *FoodsHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(data)
 }
+
+// func (h *FoodsHandler) Create(w http.ResponseWriter, r *http.Request) {
+// 	loggerUserId := r.Context().Value(keys.LoggedUserId).(int64)
+
+// 	var food models.FoodRequest
+// 	decoder := json.NewDecoder(r.Body)
+
+// 	if err := decoder.Decode(&food); err != nil {
+// 		fmt.Printf("Error %v\n", err)
+// 		http.Error(w, "Could not create the food", http.StatusBadRequest)
+// 		return
+// 	}
+
+// 	w.Header().Set("Content-Type", "application/json")
+// 	json.NewEncoder(w).Encode(data)
+// }

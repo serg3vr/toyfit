@@ -45,7 +45,7 @@
       </q-list>
     </q-drawer>
 
-    <q-drawer
+    <!-- <q-drawer
         side="right"
         v-model="rightDrawer.show"
         show-if-above
@@ -65,7 +65,7 @@
             <div v-for="n in 20" :key="n">Drawer {{ n }} / 50</div>
           </div>
         </q-scroll-area>
-      </q-drawer>
+      </q-drawer> -->
 
     <q-page-container>
       <router-view />
@@ -76,9 +76,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import MenuItem, { type MenuItemProps } from 'components/MenuItem.vue';
-import { useRightDrawerStore } from 'src/stores/right-drawer-store';
+// import { useRightDrawerStore } from 'src/stores/right-drawer-store';
 
-const rightDrawer = useRightDrawerStore()
+// const rightDrawer = useRightDrawerStore()
 
 const menuItemlist: MenuItemProps[] = [
   {

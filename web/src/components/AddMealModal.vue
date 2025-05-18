@@ -169,7 +169,7 @@ import { ref, reactive, defineModel } from 'vue'
 import { api } from 'boot/axios'
 import { useQuasar } from 'quasar'
 import moment from 'moment'
-import { lockDecimals } from 'src/commons/utils'
+import { lockDecimals, handleRequestError } from 'src/commons/utils'
 
 const emit = defineEmits(['hide', 'loadDailyMealFoods'])
 const $q = useQuasar()
@@ -272,7 +272,9 @@ const addMealFood = async () => {
       fats: Number(fields.food.fats)
     } : null
   }
-  const { data } = await api.post('meal-foods', params).catch(error => error)
+  const { data, response } = await api.post('meal-foods', params).catch(error => error)
+  handleRequestError(response)
+
   if (data) {
     emit('loadDailyMealFoods')
     onHide()
@@ -286,6 +288,7 @@ const addMealFood = async () => {
       loadFoods()
     }
   }
+
 }
 
 loadFoods()

@@ -12,7 +12,7 @@
     no-swipe-close
     no-swipe-backdrop
     :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'"
-    @hide="model = false"
+    @hide="close"
   >
     <div class="row" style="height: 90vh;">
       <div class="col-xs-12">
@@ -24,12 +24,19 @@
                   <span class="text-h6 text-weight-regular">Add food</span>
                 </div>
                 <div class="col-xs-12">
+                  <!-- :error="v$.fields.name.$error"
+                  :rules="r$.fields.name" -->
                   <q-input
                     v-model="fields.name"
                     filled
                     label="Name"
                     :maxlength="100"
+                    :error="v$.fields.name.$error"
+                    :rules="r$.fields.name"
                   >
+                  <template v-slot:label>
+                    <span>Name </span><span class="text-red">*</span>
+                  </template>
                   </q-input>
                 </div>
                 <div class="col-xs-12">
@@ -48,6 +55,8 @@
                     label="Kcal"
                     :maxlength="6"
                     @keypress="lockDecimals"
+                    :error="v$.fields.kcal.$error"
+                    :rules="r$.fields.kcal"
                   >
                   </q-input>
                 </div>
@@ -97,7 +106,7 @@
         </q-scroll-area>
       </div>
     </div>
-    <div class="row" style="height: 10vh;">
+    <div class="row q-ma-sm q-col-gutter-sm" style="height: 10vh;">
       <div class="col-xs-12 text-right">
         <q-btn
           icon="close"
@@ -105,7 +114,7 @@
           color="black"
           label="Close"
           flat
-          @click="model = false"
+          @click="close"
         />
         &nbsp;
         <q-btn
@@ -122,11 +131,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, defineModel } from 'vue'
+import { ref, reactive, computed, defineModel } from 'vue'
 import { api } from 'boot/axios'
 import { useQuasar } from 'quasar'
 // import moment from 'moment'
-import { lockDecimals } from 'src/commons/utils'
+import { handleRequestError, lockDecimals } from 'src/commons/utils'
+import { useVuelidate } from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
 
 // const emit = defineEmits(['hide', 'loadDailyMealFoods'])
 const $q = useQuasar()
@@ -147,7 +158,7 @@ const $q = useQuasar()
 
 const model = defineModel({ required: true })
 
-const fields = reactive({
+const defaultFields = {
   name: null,
 	description: null,
 	kcal: null,
@@ -155,23 +166,57 @@ const fields = reactive({
 	proteins: null,
 	fats: null,
 	sodium: null
-})
+}
+const fields = reactive({ ...defaultFields })
 
 const loading = ref(false)
 
-const createFood = () => {
+const validations = {
+  fields: {
+    name: { required },
+    kcal: { required },
+  }
+}
+const v$ = useVuelidate(validations, { fields })
+const ecer = 'El campo es requerido.'
+const r$ = computed(() => {
+  return {
+    fields: {
+      name: [() => (!v$.value.fields.name.$error) || ecer],
+      kcal: [() => (!v$.value.fields.kcal.$error) || ecer],
+    }
+  }
+})
+
+const close = () => {
+  cleanFields()
+  model.value = false
+}
+
+const cleanFields = () => {
+  Object.assign(fields, defaultFields)
+  v$.value.fields.$reset()
+}
+
+const createFood = async () => {
+  const fieldsAreCorrect = await v$.value.fields.$validate()
+  if (!fieldsAreCorrect) return
+
   loading.value = true
   const params = { ...fields }
-  api.post('foods', params).then(({ data }) => {
-    if (data) {
-      $q.notify({
-        message: 'Food added.',
-        position: 'bottom-left',
-        color: 'primary',
-        icon: 'check'
-      })
-    }
-  }).catch(error => error)
+  params.kcal = Number(params.kcal)
+  const { data, response } = await api.post('foods', params).catch(error => error)
+  handleRequestError(response)
+
+  if (data) {
+    $q.notify({
+      message: 'Food added.',
+      position: 'bottom-left',
+      color: 'primary',
+      icon: 'check'
+    })
+    close()
+  }
   loading.value = false
 }
 </script>

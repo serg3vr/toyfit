@@ -1,4 +1,4 @@
-import { useQuasar } from 'quasar'
+import { Notify } from 'quasar'
 
 // Restringir un <q-input> de vue3 a solo utilizar enteros
 const lockIntegers = (evt: Event) => {
@@ -34,9 +34,8 @@ const lockDecimals = (evt: Event) => {
 
 // Mostrar notificación si se detecta un error en un request
 const handleRequestError = (response) => {
-  const $q = useQuasar()
   if (response) {
-    $q.notify({
+    Notify.create({
       message: response.data,
       position: 'bottom-left',
       color: 'red-6',

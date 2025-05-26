@@ -3,22 +3,16 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-
-	// "fmt"
+	_ "github.com/lib/pq"
 	"net/http"
 	"toyfit/config"
-	// keys "toyfit/src/lib"
+	keys "toyfit/src/lib"
 	"toyfit/src/models"
-
-	// "toyfit/src/repository"
-
-	// keys "toyfit/src/lib"
-
-	_ "github.com/lib/pq"
+	"toyfit/src/repository"
 )
 
 type FoodsHandler struct {
-	//*repository.TransactionsRepository
+	*repository.FoodsRepository
 }
 
 func (h *FoodsHandler) GetAll(w http.ResponseWriter, r *http.Request) {
@@ -67,18 +61,26 @@ func (h *FoodsHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(data)
 }
 
-// func (h *FoodsHandler) Create(w http.ResponseWriter, r *http.Request) {
-// 	loggerUserId := r.Context().Value(keys.LoggedUserId).(int64)
+func (h *FoodsHandler) Create(w http.ResponseWriter, r *http.Request) {
+	loggerUserId := r.Context().Value(keys.LoggedUserId).(int64)
 
-// 	var food models.FoodRequest
-// 	decoder := json.NewDecoder(r.Body)
+	var food models.FoodRequest
+	decoder := json.NewDecoder(r.Body)
 
-// 	if err := decoder.Decode(&food); err != nil {
-// 		fmt.Printf("Error %v\n", err)
-// 		http.Error(w, "Could not create the food", http.StatusBadRequest)
-// 		return
-// 	}
+	if err := decoder.Decode(&food); err != nil {
+		fmt.Printf("Error %v\n", err)
+		http.Error(w, "Could not create the food", http.StatusBadRequest)
+		return
+	}
 
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(data)
-// }
+	id, err := h.FoodsRepository.Create(loggerUserId, food)
+
+	if err != nil {
+		fmt.Printf("Error %v\n", err)
+		http.Error(w, "Could not create the food", http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(id)
+}

@@ -14,6 +14,6 @@ func SetFoodsRouter() *chi.Mux {
 	// r.Get("/{id:[0-9]+}", jobPost.GetById)
 	r.Get("/", h.GetAll)
 	// r.Put("/{id:[0-9]+}/address", jobPost.SetAddress)
-	// r.Put("/{id:[0-9]+}", jobPost.Update)
+	r.Put("/{id:[0-9]+}", h.Update)
 	return r
 }

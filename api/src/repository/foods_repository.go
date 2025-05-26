@@ -63,3 +63,34 @@ func (r *FoodsRepository) Create(loggedUserId int64, model models.FoodRequest) (
 
 	return id, err
 }
+
+func (r *FoodsRepository) Update(loggedUserId int64, model models.FoodRequest) (int64, error) {
+	sqlStatement := `
+		update foods set 
+			updated_by = $1,
+			name = $3, 
+			description = $4,
+			kcal = $5,
+			carbs = $6,
+			proteins = $7,
+			fats = $8,
+			sodium = $9
+		where id = $2
+		returning id
+	`
+	var id int64
+	err := config.DB.QueryRow(
+		sqlStatement,
+		loggedUserId,
+		model.Id,
+		model.Name,
+		model.Description,
+		model.Kcal,
+		model.Carbs,
+		model.Proteins,
+		model.Fats,
+		model.Sodium,
+	).Scan(&id)
+
+	return id, err
+}

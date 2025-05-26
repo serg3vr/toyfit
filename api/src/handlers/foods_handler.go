@@ -84,3 +84,27 @@ func (h *FoodsHandler) Create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(id)
 }
+
+func (h *FoodsHandler) Update(w http.ResponseWriter, r *http.Request) {
+	loggerUserId := r.Context().Value(keys.LoggedUserId).(int64)
+
+	var food models.FoodRequest
+	decoder := json.NewDecoder(r.Body)
+
+	if err := decoder.Decode(&food); err != nil {
+		fmt.Printf("Error %v\n", err)
+		http.Error(w, "Could not update the food", http.StatusBadRequest)
+		return
+	}
+
+	id, err := h.FoodsRepository.Update(loggerUserId, food)
+
+	if err != nil {
+		fmt.Printf("Error %v\n", err)
+		http.Error(w, "Could not update the food", http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(id)
+}

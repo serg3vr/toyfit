@@ -21,7 +21,7 @@
           row-key="id"
         >
           <template v-slot:body="props">
-            <q-tr :props="props">
+            <q-tr :props="props" @click="onRowClick(props.row)" style="cursor: pointer;">
               <q-td key="name" :props="props">
                 {{ props.row.name }}
               </q-td>
@@ -45,6 +45,10 @@
     <NewFoodPanel
       v-model="showModal"
     />
+    <EditFoodPanel
+      v-model="showEditPanel"
+      :fields="editFields"
+    />
   </q-page>
 </template>
 
@@ -52,10 +56,22 @@
 import { ref, reactive } from 'vue';
 import { api } from 'boot/axios'
 import NewFoodPanel from 'src/components/NewFoodPanel.vue';
+import EditFoodPanel from 'src/components/EditFoodPanel.vue';
 // import { useRightDrawerStore } from 'src/stores/right-drawer-store';
 
 // const rightDrawer = useRightDrawerStore()
 const showModal = ref(false)
+const showEditPanel = ref(false)
+let editFields = {
+  id: null,
+  name: null,
+	description: null,
+	kcal: null,
+	carbs: null,
+	proteins: null,
+	fats: null,
+	sodium: null
+}
 
 interface IFoods {
   id: number
@@ -89,6 +105,11 @@ const loadFoods = () => {
 
 const openDrawer = () => {
   showModal.value = true
+}
+
+const onRowClick = (row) => {
+  showEditPanel.value = true
+  editFields = { ...row }
 }
 
 loadFoods()

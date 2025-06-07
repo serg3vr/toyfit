@@ -18,6 +18,7 @@
           flat
           :rows="rows"
           :columns="columns"
+          :pagination="pagination"
           row-key="id"
         >
           <template v-slot:body="props">
@@ -95,6 +96,14 @@ const columns = [
   { name: 'proteins', label: 'Protein (g)', field: 'proteins', align: 'right' },
   { name: 'sodium', label: 'Sodium (mg)', field: 'sodium', align: 'right' }
 ]
+
+const pagination = {
+  sortBy: 'desc',
+  descending: false,
+  page: 1,
+  rowsPerPage: 25
+  // rowsNumber: xx if getting data from a server
+}
 
 const loadFoods = () => {
   api.get('foods').then(response => {

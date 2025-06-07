@@ -218,7 +218,7 @@ const createFood = async () => {
 
   if (data) {
     $q.notify({
-      message: 'Food added.',
+      message: 'Food updated.',
       position: 'bottom-left',
       color: 'primary',
       icon: 'check'

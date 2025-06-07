@@ -9,39 +9,80 @@ import (
 
 type FoodsRepository struct{}
 
-// func (r *MealFoodsRepository) GetAll(loggedUserId int) ([]models.ResponseTransaction, error) {
-// 	sqlStatement := `
-// 		SELECT
-// 			id,
-// 			to_char(date, 'YYYY-MM-DD HH24:MI:SS') AS date,
-// 			amount,
-// 			type_id,
-// 			description
-// 		FROM transactions
-// 		WHERE user_id = $1
-// 		ORDER BY date DESC, id DESC
-// 	`
-// 	var data []models.ResponseTransaction
-// 	rows, err := config.DB.Query(sqlStatement, loggedUserId)
-// 	if err != nil {
-// 		return data, err
-// 	}
-// 	for rows.Next() {
-// 		var transaction models.ResponseTransaction
-// 		err := rows.Scan(
-// 			&transaction.Id,
-// 			&transaction.Date,
-// 			&transaction.Amount,
-// 			&transaction.TypeId,
-// 			&transaction.Description,
-// 		)
-// 		if err != nil {
-// 			return data, err
-// 		}
-// 		data = append(data, transaction)
-// 	}
-// 	return data, err
-// }
+func (r *FoodsRepository) GetAll() ([]models.FoodResponse, error) {
+	query := `
+		SELECT
+			id,
+			name,
+			description,
+			kcal,
+			carbs,
+			proteins,
+			fats,
+			sodium
+		FROM foods
+		ORDER BY name DESC
+	`
+	var data []models.FoodResponse
+	rows, err := config.DB.Query(query)
+	if err != nil {
+		return data, err
+	}
+
+	for rows.Next() {
+		var model models.FoodResponse
+		err := rows.Scan(
+			&model.Id,
+			&model.Name,
+			&model.Description,
+			&model.Kcal,
+			&model.Carbs,
+			&model.Proteins,
+			&model.Fats,
+			&model.Sodium,
+		)
+		if err != nil {
+			return data, err
+		}
+		data = append(data, model)
+	}
+
+	return data, err
+}
+
+func (r *FoodsRepository) GetById(id int64) (models.FoodResponse, error) {
+	query := `
+		SELECT
+			id,
+			name,
+			description,
+			kcal,
+			carbs,
+			proteins,
+			fats,
+			sodium
+		FROM foods
+		WHERE id = $1
+		ORDER BY name DESC
+	`
+	var model models.FoodResponse
+	err := config.DB.QueryRow(query, id).Scan(
+		&model.Id,
+		&model.Name,
+		&model.Description,
+		&model.Kcal,
+		&model.Carbs,
+		&model.Proteins,
+		&model.Fats,
+		&model.Sodium,
+	)
+
+	if err != nil {
+		return model, err
+	}
+
+	return model, err
+}
 
 func (r *FoodsRepository) Create(loggedUserId int64, model models.FoodRequest) (int64, error) {
 	sqlStatement := `

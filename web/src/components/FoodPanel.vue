@@ -20,8 +20,20 @@
           <div class="row">
             <div class="col-xs-12">
               <div class="row q-ma-sm q-col-gutter-sm">
-                <div class="col-xs-12">
-                  <span class="text-h6 text-weight-regular">Add food</span>
+                <div class="col-xs-10">
+                  <span class="text-h6 text-weight-regular" v-if="hasId">Edit food</span>
+                  <span class="text-h6 text-weight-regular" v-else="hasId">Add food</span>
+                </div>
+                <div class="col-xs-2 text-right">
+                  <q-input
+                    v-model="fields.id"
+                    filled
+                    label="Id"
+                    :maxlength="100"
+                    disable
+                    input-class="text-right"
+                  >
+                  </q-input>
                 </div>
                 <div class="col-xs-12">
                   <!-- :error="v$.fields.name.$error"
@@ -34,9 +46,9 @@
                     :error="v$.fields.name.$error"
                     :rules="r$.fields.name"
                   >
-                  <template v-slot:label>
-                    <span>Name </span><span class="text-red">*</span>
-                  </template>
+                    <template v-slot:label>
+                      <span>Name </span><span class="text-red">*</span>
+                    </template>
                   </q-input>
                 </div>
                 <div class="col-xs-12">
@@ -118,6 +130,16 @@
         />
         &nbsp;
         <q-btn
+          v-if="hasId"
+          icon="edit"
+          aria-label="Update"
+          color="primary"
+          label="Update"
+          @click="updateFood"
+          :loading="loading"
+        />
+        <q-btn
+          v-else
           icon="add"
           aria-label="Add"
           color="primary"
@@ -131,34 +153,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, defineModel } from 'vue'
+import { ref, reactive, computed, defineModel, watch } from 'vue'
 import { api } from 'boot/axios'
 import { useQuasar } from 'quasar'
-// import moment from 'moment'
 import { handleRequestError, lockDecimals } from 'src/commons/utils'
 import { useVuelidate } from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 
-// const emit = defineEmits(['hide', 'loadDailyMealFoods'])
 const $q = useQuasar()
 
-// const props = defineProps({
-//   mealTypeId: {
-//     type: Number,
-//     // default: false,
-//     required: false
-//   }
-// })
-
-// const mealTypeId = ref(1)
-
-// const mealTypeId = computed(() => {
-//   return props.mealTypeId
-// })
+const props = defineProps({
+  fields: {
+    type: Object,
+    default: {},
+    required: false
+  }
+})
 
 const model = defineModel({ required: true })
 
 const defaultFields = {
+  id: null,
   name: null,
 	description: null,
 	kcal: null,
@@ -186,6 +201,10 @@ const r$ = computed(() => {
       kcal: [() => (!v$.value.fields.kcal.$error) || ecer],
     }
   }
+})
+
+const hasId = computed(() => {
+  return fields.id && fields.id > 0
 })
 
 const close = () => {
@@ -219,6 +238,35 @@ const createFood = async () => {
   }
   loading.value = false
 }
+
+const updateFood = async () => {
+  const fieldsAreCorrect = await v$.value.fields.$validate()
+  if (!fieldsAreCorrect) return
+
+  loading.value = true
+
+  const params = {
+    ...fields,
+    kcal: Number(fields.kcal)
+  }
+  const { data, response } = await api.put(`foods/${fields.id}`, params).catch(error => error)
+  handleRequestError(response)
+
+  if (data) {
+    $q.notify({
+      message: 'Food updated.',
+      position: 'bottom-left',
+      color: 'primary',
+      icon: 'check'
+    })
+    close()
+  }
+  loading.value = false
+}
+
+watch(() => props.fields, () => {
+  Object.assign(fields, props.fields)
+})
 </script>
 
 <style>

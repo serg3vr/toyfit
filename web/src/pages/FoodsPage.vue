@@ -20,7 +20,15 @@
           :columns="columns"
           :pagination="pagination"
           row-key="id"
+          :filter="filter"
         >
+        <template v-slot:top-left>
+          <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </template>
           <template v-slot:body="props">
             <q-tr :props="props" @click="onRowClick(props.row)" style="cursor: pointer;">
               <q-td key="name" :props="props">
@@ -43,10 +51,10 @@
         </q-table>
       </div>
     </div>
-    <NewFoodPanel
+    <FoodPanel
       v-model="showModal"
     />
-    <EditFoodPanel
+    <FoodPanel
       v-model="showEditPanel"
       :fields="editFields"
     />
@@ -56,11 +64,8 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { api } from 'boot/axios'
-import NewFoodPanel from 'src/components/NewFoodPanel.vue';
-import EditFoodPanel from 'src/components/EditFoodPanel.vue';
-// import { useRightDrawerStore } from 'src/stores/right-drawer-store';
+import FoodPanel from 'src/components/FoodPanel.vue';
 
-// const rightDrawer = useRightDrawerStore()
 const showModal = ref(false)
 const showEditPanel = ref(false)
 let editFields = {
@@ -104,6 +109,8 @@ const pagination = {
   rowsPerPage: 25
   // rowsNumber: xx if getting data from a server
 }
+
+const filter = ref(null)
 
 const loadFoods = () => {
   api.get('foods').then(response => {

@@ -25,7 +25,7 @@
                   <span class="text-h6 text-weight-regular" v-else="hasId">Add food</span>
                 </div>
                 <div class="col-xs-2 text-right">
-                  <q-input
+                  <!-- <q-input
                     v-model="fields.id"
                     filled
                     label="Id"
@@ -33,7 +33,24 @@
                     disable
                     input-class="text-right"
                   >
-                  </q-input>
+                  </q-input> -->
+                  <q-btn color="primary" icon="more_horiz" flat>
+                    <q-menu>
+                      <q-list style="min-width: 100px">
+                        <!-- <q-item clickable v-close-popup>
+                          <q-item-section>Open...</q-item-section>
+                        </q-item> -->
+                        <q-item clickable v-close-popup @click="deleteFood">
+                          <q-item-section>Delete</q-item-section>
+                        </q-item>
+                        <!-- <q-separator />
+                        <q-separator />
+                        <q-item clickable v-close-popup>
+                          <q-item-section>Quit</q-item-section>
+                        </q-item> -->
+                      </q-list>
+                    </q-menu>
+                  </q-btn>
                 </div>
                 <div class="col-xs-12">
                   <!-- :error="v$.fields.name.$error"
@@ -160,6 +177,7 @@ import { handleRequestError, lockDecimals } from 'src/commons/utils'
 import { useVuelidate } from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 
+const emit = defineEmits(['reload'])
 const $q = useQuasar()
 
 const props = defineProps({
@@ -212,6 +230,12 @@ const close = () => {
   model.value = false
 }
 
+const closeAndReload = () => {
+  cleanFields()
+  model.value = false
+  emit('reload')
+}
+
 const cleanFields = () => {
   Object.assign(fields, defaultFields)
   v$.value.fields.$reset()
@@ -234,7 +258,7 @@ const createFood = async () => {
       color: 'primary',
       icon: 'check'
     })
-    close()
+    closeAndReload()
   }
   loading.value = false
 }
@@ -259,7 +283,32 @@ const updateFood = async () => {
       color: 'primary',
       icon: 'check'
     })
-    close()
+    closeAndReload()
+  }
+  loading.value = false
+}
+
+const deleteFood = async () => {
+  // const fieldsAreCorrect = await v$.value.fields.$validate()
+  // if (!fieldsAreCorrect) return
+
+  loading.value = true
+
+  // const params = {
+  //   ...fields,
+  //   kcal: Number(fields.kcal)
+  // }
+  const { data, response } = await api.delete(`foods/${fields.id}`).catch(error => error)
+  handleRequestError(response)
+
+  if (data) {
+    $q.notify({
+      message: 'Food deleted.',
+      position: 'bottom-left',
+      color: 'primary',
+      icon: 'check'
+    })
+    closeAndReload()
   }
   loading.value = false
 }

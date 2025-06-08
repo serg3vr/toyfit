@@ -51,12 +51,13 @@
         </q-table>
       </div>
     </div>
-    <FoodPanel
+    <!-- <FoodPanel
       v-model="showModal"
-    />
+    /> -->
     <FoodPanel
-      v-model="showEditPanel"
+      v-model="showFoodPanel"
       :fields="editFields"
+      @reload="loadFoods"
     />
   </q-page>
 </template>
@@ -66,8 +67,8 @@ import { ref, reactive } from 'vue';
 import { api } from 'boot/axios'
 import FoodPanel from 'src/components/FoodPanel.vue';
 
-const showModal = ref(false)
-const showEditPanel = ref(false)
+// const showModal = ref(false)
+const showFoodPanel = ref(false)
 let editFields = {
   id: null,
   name: null,
@@ -120,11 +121,11 @@ const loadFoods = () => {
 }
 
 const openDrawer = () => {
-  showModal.value = true
+  showFoodPanel.value = true
 }
 
 const onRowClick = (row) => {
-  showEditPanel.value = true
+  showFoodPanel.value = true
   editFields = { ...row }
 }
 

@@ -15,6 +15,7 @@ import (
 
 type FoodsHandler struct {
 	*repository.FoodsRepository
+	*repository.MealFoodsRepository
 }
 
 func (h *FoodsHandler) GetAll(w http.ResponseWriter, r *http.Request) {
@@ -84,6 +85,47 @@ func (h *FoodsHandler) Update(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Printf("Error %v\n", err)
 		http.Error(w, "Could not update the food", http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(id)
+}
+
+func (h *FoodsHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	// loggerUserId := r.Context().Value(keys.LoggedUserId).(int64)
+
+	str := chi.URLParam(r, "id")
+	id, _ := strconv.ParseInt(str, 10, 64)
+
+	_, err := h.FoodsRepository.GetById(id)
+
+	if err != nil {
+		fmt.Printf("Error %v\n", err)
+		http.Error(w, "Could not found the food", http.StatusBadRequest)
+		return
+	}
+
+	// Obtener meal foods que contengan esta food si existe mandar error 400
+
+	mealFoods, err := h.MealFoodsRepository.FindByFood(id)
+
+	if err != nil {
+		fmt.Printf("Error %v\n", err)
+		http.Error(w, "Could not found the food", http.StatusBadRequest)
+		return
+	}
+
+	if len(mealFoods) > 0 {
+		http.Error(w, "Food has depending meal foods", http.StatusBadRequest)
+		return
+	}
+
+	id, err = h.FoodsRepository.Delete(id)
+
+	if err != nil {
+		fmt.Printf("Error %v\n", err)
+		http.Error(w, "Could not delete the food", http.StatusBadRequest)
 		return
 	}
 

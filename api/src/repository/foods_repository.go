@@ -135,3 +135,17 @@ func (r *FoodsRepository) Update(loggedUserId int64, model models.FoodRequest) (
 
 	return id, err
 }
+
+func (r *FoodsRepository) Delete(id int64) (int64, error) {
+	sqlStatement := `
+		delete from foods where id = $1
+		returning id
+	`
+	// var id int64
+	err := config.DB.QueryRow(
+		sqlStatement,
+		id,
+	).Scan(&id)
+
+	return id, err
+}
